@@ -11,3 +11,14 @@
 *.lai
 *.la
 *.a
+
+.DS_Store
+xcschememanagement.plist
+/xcode/build
+/xcode/Cinder-AvfImpl.xcodeproj/xcuserdata
+/xcode/Cinder-AvfImpl.xcodeproj/project.xcworkspace/xcuserdata
+/xcode/Cinder-AvfImpl.xcodeproj/project.xcworkspace/
+/xcode_ios/build
+/xcode_ios/Cinder-AvfImpl.xcodeproj/xcuserdata
+/xcode_ios/Cinder-AvfImpl.xcodeproj/project.xcworkspace/xcuserdata
+/xcode_ios/Cinder-AvfImpl.xcodeproj/project.xcworkspace/
