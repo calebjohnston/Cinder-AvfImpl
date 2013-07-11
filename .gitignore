@@ -22,3 +22,5 @@ xcschememanagement.plist
 /xcode_ios/Cinder-AvfImpl.xcodeproj/xcuserdata
 /xcode_ios/Cinder-AvfImpl.xcodeproj/project.xcworkspace/xcuserdata
 /xcode_ios/Cinder-AvfImpl.xcodeproj/project.xcworkspace/
+*.xcscheme
+*.xcsettings
