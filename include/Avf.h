@@ -173,6 +173,7 @@ class MovieBase {
 	bool						mLoaded, mPlayThroughOk, mPlayable, mProtected;
 	bool						mPlayingForward, mLoop, mPalindrome;
 	bool						mHasAudio, mHasVideo;
+	bool						mPlaying;	// required to auto-start the movie
 	
 	AVPlayer*					mPlayer;
 	AVPlayerItem*				mPlayerItem;

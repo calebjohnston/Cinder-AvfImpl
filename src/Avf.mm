@@ -439,7 +439,10 @@ bool MovieBase::isDone() const
 
 void MovieBase::play(bool toggle)
 {
-	if (!mPlayer) return;
+	if (!mPlayer) {
+		mPlaying = true;
+		return;
+	}
 	
 	if (toggle) {
 		isPlaying()? [mPlayer pause]: [mPlayer play];
@@ -451,7 +454,10 @@ void MovieBase::play(bool toggle)
 
 void MovieBase::stop()
 {
-	if (!mPlayer) return;
+	mPlaying = false;
+	
+	if (!mPlayer)
+		return;
 	
 	[mPlayer pause];
 }
@@ -460,7 +466,7 @@ void MovieBase::init()
 {
 	mHasAudio = mHasVideo = false;
 	mPlayThroughOk = mPlayable = mProtected = false;
-	mPlayingForward = true;
+	mPlaying = mPlayingForward = true;
 	mLoop = mPalindrome = false;
 	mFrameRate = -1;
 	mWidth = -1;
@@ -703,6 +709,8 @@ void MovieBase::removeObservers()
 void MovieBase::playerReady()
 {
 	mSignalReady();
+	
+	if (mPlaying) play();
 }
 	
 void MovieBase::playerItemEnded()
