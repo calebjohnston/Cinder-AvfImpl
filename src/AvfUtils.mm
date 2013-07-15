@@ -294,6 +294,20 @@ Surface8u convertCvPixelBufferToSurface( CVPixelBufferRef pixelBufferRef )
 	
 	return result;
 }
+	
+Surface8u convertCmSampleBufferToSurface( CMSampleBufferRef sampleBufferRef )
+{
+	CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBufferRef);
+	return convertCvPixelBufferToSurface(imageBuffer);
+}
+
+// @see http://developer.apple.com/library/ios/#documentation/AVFoundation/Reference/AVAssetWriterInputPixelBufferAdaptor_Class/Reference/Reference.html
+// @see http://developer.apple.com/library/ios/#qa/qa1702/_index.html
+CMSampleBufferRef convertSurfaceToCmSampleBuffer( Surface8u surface )
+{
+//	CMSampleBufferRef;
+	return 0;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // ImageTargetCgImage
