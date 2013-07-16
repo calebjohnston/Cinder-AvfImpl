@@ -24,7 +24,11 @@ bool setAudioSessionModes()
 	
 #endif
 }
-
+	
+//
+// @see AVFoundation/AVVideoSettings.h
+//
+	
 bool dictionarySetValue( CFMutableDictionaryRef dict, CFStringRef key, SInt32 value )
 {
 	bool         setNumber = false;
@@ -303,10 +307,35 @@ Surface8u convertCmSampleBufferToSurface( CMSampleBufferRef sampleBufferRef )
 
 // @see http://developer.apple.com/library/ios/#documentation/AVFoundation/Reference/AVAssetWriterInputPixelBufferAdaptor_Class/Reference/Reference.html
 // @see http://developer.apple.com/library/ios/#qa/qa1702/_index.html
-CMSampleBufferRef convertSurfaceToCmSampleBuffer( Surface8u surface )
+// @see http://stackoverflow.com/questions/11863416/read-texture-bytes-with-glreadpixels
+CMSampleBufferRef convertSurfaceToCmSampleBuffer( SurfaceRef source )
 {
-//	CMSampleBufferRef;
-	return 0;
+	ImageTargetCvPixelBufferRef target = ImageTargetCvPixelBuffer::createRef( source, convertToYpCbCr );
+	source->load( target );
+	target->finalize();
+	::CVPixelBufferRef result( target->getCvPixelBuffer() );
+	::CVPixelBufferRetain( result );
+	return (CMSampleBufferRef) result;
+}
+
+CMSampleBufferRef convertTextureToCmSampleBuffer( TextureRef source )
+{
+	CVPixelBufferLockBaseAddress( pixelBufferRef, 0 );
+	uint8_t *ptr = reinterpret_cast<uint8_t*>( CVPixelBufferGetBaseAddress( pixelBufferRef ) );
+	int32_t rowBytes = CVPixelBufferGetBytesPerRow( pixelBufferRef );
+	OSType type = CVPixelBufferGetPixelFormatType( pixelBufferRef );
+	size_t width = CVPixelBufferGetWidth( pixelBufferRef );
+	size_t height = CVPixelBufferGetHeight( pixelBufferRef );
+	CVPixelBufferUnlockBaseAddress(pixelBufferRef, 0);
+	
+	GLenum target = CVOpenGLTextureGetTarget( mVideoTextureRef );
+	GLuint name = CVOpenGLTextureGetName( mVideoTextureRef );
+	bool flipped = ! CVOpenGLTextureIsFlipped( mVideoTextureRef );
+	mTexture = gl::Texture( target, name, mWidth, mHeight, true );
+	Vec2f t0, lowerRight, t2, upperLeft;
+	CVOpenGLTextureGetCleanTexCoords( mVideoTextureRef, &t0.x, &lowerRight.x, &t2.x, &upperLeft.x );
+	mTexture.setCleanTexCoords( std::max( upperLeft.x, lowerRight.x ), std::max( upperLeft.y, lowerRight.y ) );
+	mTexture.setFlipped( flipped );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

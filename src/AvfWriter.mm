@@ -166,7 +166,30 @@ const MovieWriter::Format& MovieWriter::Format::operator=( const Format &format 
 // MovieWriter
 MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, const Format &format )
 	: mPath( path ), mWidth( width ), mHeight( height ), mFormat( format ), mFinished( false )
-{	
+{
+//	AVFileTypeQuickTimeMovie
+//	AVFileTypeMPEG4
+//	AVFileTypeAppleM4V
+	
+	NSString* str;
+	NSURL* localOutputURL = [NSURL URLWithString:str];
+	NSError* error = nil;
+	mWriter = [[AVAssetWriter alloc] initWithURL:localOutputURL fileType:AVFileTypeQuickTimeMovie error:&error];
+	
+	// Compress to H.264 with the asset writer
+	NSDictionary* compressionSettings = nil;
+	NSMutableDictionary* videoSettings = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+										  AVVideoCodecH264, AVVideoCodecKey,
+										  [NSNumber numberWithDouble:mWidth], AVVideoWidthKey,
+										  [NSNumber numberWithDouble:mHeight], AVVideoHeightKey,
+										  nil];
+	if (compressionSettings)
+		[videoSettings setObject:compressionSettings forKey:AVVideoCompressionPropertiesKey];
+	
+	mWriterSink = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:videoSettings];
+	[mWriter addInput:mWriterSink];
+	
+	
 	/*
     OSErr       err = noErr;
     Handle      dataRef;
@@ -514,10 +537,14 @@ void MovieWriter::finish()
 	if( mMovie )
 		::DisposeMovie( mMovie );
 		*/
-		
+
+	NSError* error = nil;
+	bool success = [mWriter finishWriting];
+	if (!success)
+		error = [mWriter error];
 }
 
-bool MovieWriter::getUserCompressionSettings( Format *result, ImageSourceRef imageSource )
+bool MovieWriter::getUserCompressionSettings( Format* result, ImageSourceRef imageSource )
 {
 	
 	/* RE-IMPLEMENT

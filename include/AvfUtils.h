@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cinder/Cinder.h"
+#include "cinder/gl/Texture.h"
 #include "cinder/Url.h"
 #include "cinder/Surface.h"
 #include "cinder/ImageIo.h"
@@ -27,7 +28,8 @@ static void CVPixelBufferDealloc( void *refcon );
 //! Makes a cinder::Surface form a CVPixelBufferRef, setting a proper deallocation function to free the CVPixelBufferRef upon the destruction of the Surface::Obj
 Surface8u convertCvPixelBufferToSurface( CVPixelBufferRef pixelBufferRef );
 Surface8u convertCmSampleBufferToSurface( CMSampleBufferRef sampleBufferRef );
-CMSampleBufferRef convertSurfaceToCmSampleBuffer( Surface8u surface );
+CMSampleBufferRef convertSurfaceToCmSampleBuffer( SurfaceRef surface );
+CMSampleBufferRef convertTextureToCmSampleBuffer( TextureRef surface );
 
 typedef std::shared_ptr<class ImageTargetCvPixelBuffer> ImageTargetCvPixelBufferRef;
 

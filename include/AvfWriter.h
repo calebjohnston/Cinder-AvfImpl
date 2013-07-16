@@ -18,10 +18,11 @@
 	#endif
 
 	#if defined( __OBJC__ )
-		@class AVAsset;
+		@class AVAsset, AVAssetWriter, AVAssetWriterInput, AVAssetWriterInputPixelBufferAdaptor;
 
 	#else
-		class AVAsset;
+		class AVAsset, AVAssetWriter, AVAssetWriterInput, AVAssetWriterInputPixelBufferAdaptor;
+
 	#endif
 #endif
 
@@ -159,6 +160,10 @@ class MovieWriter {
 	::ICMCompressionSessionRef		mCompressionSession;
 	::ICMCompressionPassModeFlags 	mMultiPassModeFlags;
 	*/
+	AVAssetWriter* mWriter;
+	AVAssetWriterInput* mWriterSink;
+	AVAssetWriterInputPixelBufferAdaptor* mSinkAdapater;
+	
 	fs::path		mPath;
 	uint32_t		mNumFrames;
 	int64_t			mCurrentTimeValue;
