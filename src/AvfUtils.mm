@@ -308,6 +308,7 @@ Surface8u convertCmSampleBufferToSurface( CMSampleBufferRef sampleBufferRef )
 // @see http://developer.apple.com/library/ios/#documentation/AVFoundation/Reference/AVAssetWriterInputPixelBufferAdaptor_Class/Reference/Reference.html
 // @see http://developer.apple.com/library/ios/#qa/qa1702/_index.html
 // @see http://stackoverflow.com/questions/11863416/read-texture-bytes-with-glreadpixels
+// @see http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/CoreVideo/CVProg_Concepts/CVProg_Concepts.html#//apple_ref/doc/uid/TP40001536-CH202-BABJDFHJ
 CMSampleBufferRef convertSurfaceToCmSampleBuffer( SurfaceRef source )
 {
 	ImageTargetCvPixelBufferRef target = ImageTargetCvPixelBuffer::createRef( source, convertToYpCbCr );
