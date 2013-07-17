@@ -309,17 +309,18 @@ Surface8u convertCmSampleBufferToSurface( CMSampleBufferRef sampleBufferRef )
 // @see http://developer.apple.com/library/ios/#qa/qa1702/_index.html
 // @see http://stackoverflow.com/questions/11863416/read-texture-bytes-with-glreadpixels
 // @see http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/CoreVideo/CVProg_Concepts/CVProg_Concepts.html#//apple_ref/doc/uid/TP40001536-CH202-BABJDFHJ
-CMSampleBufferRef convertSurfaceToCmSampleBuffer( SurfaceRef source )
+CMSampleBufferRef convertSurfaceToCmSampleBuffer( Surface8u source )
 {
 	ImageTargetCvPixelBufferRef target = ImageTargetCvPixelBuffer::createRef( source, convertToYpCbCr );
-	source->load( target );
+	source.load( target );
 	target->finalize();
 	::CVPixelBufferRef result( target->getCvPixelBuffer() );
 	::CVPixelBufferRetain( result );
 	return (CMSampleBufferRef) result;
 }
-
-CMSampleBufferRef convertTextureToCmSampleBuffer( TextureRef source )
+	
+	/*
+CVPixelBufferRef convertTextureToCvPixelBuffer( TextureRef source )
 {
 	CVPixelBufferLockBaseAddress( pixelBufferRef, 0 );
 	uint8_t *ptr = reinterpret_cast<uint8_t*>( CVPixelBufferGetBaseAddress( pixelBufferRef ) );
@@ -337,7 +338,39 @@ CMSampleBufferRef convertTextureToCmSampleBuffer( TextureRef source )
 	CVOpenGLTextureGetCleanTexCoords( mVideoTextureRef, &t0.x, &lowerRight.x, &t2.x, &upperLeft.x );
 	mTexture.setCleanTexCoords( std::max( upperLeft.x, lowerRight.x ), std::max( upperLeft.y, lowerRight.y ) );
 	mTexture.setFlipped( flipped );
+	 */
+	
+	/*
+	uint32_t width, height, rowBytes, dataSize;
+	uint8_t* pixelData;
+	CVPixelBufferRef buffer = nil;
+	CFDictionaryRef pixelBufferAttrs = nil;
+	OSType pixelFormat;
+	if (source->hasAlpha()) {
+#if defined( CINDER_COCOA_TOUCH )
+		pixelFormat == kCVPixelFormatType_32ARGB;
+#elif defined( CINDER_COCOA )
+		pixelFormat = k32ARGBPixelFormat;
+#endif
+		rowBytes = 4;
+	}
+	else {
+#if defined( CINDER_COCOA_TOUCH )
+		pixelFormat == kCVPixelFormatType_24RGB
+#elif defined( CINDER_COCOA )
+		pixelFormat = k24RGBPixelFormat;
+#endif
+		rowBytes = 3;
+	}
+	width = source->getWidth();
+	height = source->getHeight();
+	dataSize = height * width * rowBytes;
+	
+	OSStatus err = ::CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, pixelFormat, 
+												  pixelData, rowBytes, destroyDataArrayU8, NULL,
+												  NULL, &buffer);
 }
+	 */
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // ImageTargetCgImage
