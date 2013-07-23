@@ -311,8 +311,7 @@ Surface8u convertCmSampleBufferToSurface( CMSampleBufferRef sampleBufferRef )
 // @see http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/CoreVideo/CVProg_Concepts/CVProg_Concepts.html#//apple_ref/doc/uid/TP40001536-CH202-BABJDFHJ
 CMSampleBufferRef convertSurfaceToCmSampleBuffer( Surface8u source )
 {
-	ImageTargetCvPixelBufferRef target = ImageTargetCvPixelBuffer::createRef( source, convertToYpCbCr );
-	source.load( target );
+	ImageTargetCvPixelBufferRef target = ImageTargetCvPixelBuffer::createRef( source, false );
 	target->finalize();
 	::CVPixelBufferRef result( target->getCvPixelBuffer() );
 	::CVPixelBufferRetain( result );

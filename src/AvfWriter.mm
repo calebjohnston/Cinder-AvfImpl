@@ -1,6 +1,10 @@
 #include "cinder/app/App.h"
 #include "cinder/Utilities.h"
 
+#if defined( CINDER_COCOA )
+	#import <AVFoundation/AVFoundation.h>
+#endif
+
 #include "AvfUtils.h"
 #include "AvfWriter.h"
 
@@ -171,12 +175,18 @@ MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, c
 //	AVFileTypeMPEG4
 //	AVFileTypeAppleM4V
 	
-	NSString* str;
-	NSURL* localOutputURL = [NSURL URLWithString:str];
+	NSURL* localOutputURL = [NSURL fileURLWithPath:[NSString stringWithCString:mPath.c_str() encoding:[NSString defaultCStringEncoding]]];
 	NSError* error = nil;
 	mWriter = [[AVAssetWriter alloc] initWithURL:localOutputURL fileType:AVFileTypeQuickTimeMovie error:&error];
 	
 	// Compress to H.264 with the asset writer
+	/*
+	 // codec options
+	 AVVideoCodecH264 // @"avc1"
+	 AVVideoCodecJPEG // @"jpeg"
+	 AVVideoCodecAppleProRes4444 // @"ap4h"
+	 AVVideoCodecAppleProRes422   // @"apcn"
+	 */
 	NSDictionary* compressionSettings = nil;
 	NSMutableDictionary* videoSettings = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										  AVVideoCodecH264, AVVideoCodecKey,
@@ -188,7 +198,22 @@ MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, c
 	
 	mWriterSink = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:videoSettings];
 	[mWriter addInput:mWriterSink];
+	[mWriterSink setExpectsMediaDataInRealTime:true];
 	
+	mSinkAdapater = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:mWriterSink
+																					 sourcePixelBufferAttributes:compressionSettings];
+	[mWriter startWriting];
+	AVAssetWriterStatus status = [mWriter status];
+	if (status == AVAssetWriterStatusFailed) {
+		error = [mWriter error];
+		NSString* str = [error description];
+		std::string descr = (str? std::string([str UTF8String]): "");
+		ci::app::console() << " Error when trying to start writing: " << descr << std::endl;
+		
+	}
+	else {
+		[mWriter startSessionAtSourceTime:kCMTimeZero];
+	}
 	
 	/*
     OSErr       err = noErr;
@@ -240,7 +265,7 @@ MovieWriter::~MovieWriter()
 		finish();
 }
 	
-void MovieWriter::addFrame( const ImageSourceRef &imageSource, float duration )
+void MovieWriter::addFrame( const ImageSourceRef& imageSource, float duration )
 {
 	/* RE-IMPLEMENT
 	if( mFinished )
@@ -283,6 +308,34 @@ void MovieWriter::addFrame( const ImageSourceRef &imageSource, float duration )
 		MovieWriterExcFrameEncode();
 	*/
 		
+	if( mFinished )
+		throw MovieWriterExcAlreadyFinished();
+
+	CMSampleBufferRef sampleBuffer = convertSurfaceToCmSampleBuffer(imageSource);
+	while (![mWriterSink isReadyForMoreMediaData]) {
+		continue;
+	}
+	bool success = [mWriterSink appendSampleBuffer:sampleBuffer];
+	if (!success) {
+		ci::app::console() << "failed to append sample buffer." << std::endl;
+	}
+	
+	/*
+	if( duration <= 0 )
+		duration = mFormat.mDefaultTime;
+	
+	int64_t durationVal = static_cast<int64_t>( duration * mFormat.mTimeBase );
+	
+	CVPixelBufferRef pixelBuffer = createCvPixelBuffer( imageSource, false );
+	
+	CMTime time = CMTimeMakeWithSeconds(mCurrentTimeValue, mFormat.mTimeBase);
+	[mSinkAdapater appendPixelBuffer:pixelBuffer withPresentationTime:time];
+	
+	CVPixelBufferRelease( pixelBuffer );
+	
+	mCurrentTimeValue += durationVal;
+	++mNumFrames;
+	*/
 }
 
 extern "C" {

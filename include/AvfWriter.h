@@ -10,7 +10,6 @@
 
 #if defined( CINDER_MAC ) || defined( CINDER_COCOA_TOUCH )
 	#include "cinder/cocoa/CinderCocoa.h"
-	#include <AVFoundation/AVFoundation.h>
 	#include <CoreVideo/CoreVideo.h>
 
 	#if defined( CINDER_MAC )
@@ -21,7 +20,10 @@
 		@class AVAsset, AVAssetWriter, AVAssetWriterInput, AVAssetWriterInputPixelBufferAdaptor;
 
 	#else
-		class AVAsset, AVAssetWriter, AVAssetWriterInput, AVAssetWriterInputPixelBufferAdaptor;
+		class AVAsset;
+		class AVAssetWriter;
+		class AVAssetWriterInput;
+		class AVAssetWriterInputPixelBufferAdaptor;
 
 	#endif
 #endif
@@ -132,12 +134,12 @@ class MovieWriter {
 
 	/** \brief Presents the user with the standard compression options dialog. Optional \a previewImage provides a still image as a preview (currently ignored on Mac OS X). Returns \c false if user cancelled.
 		\image html qtime/MovieWriter/qtime_settings_small.png **/
-	static bool getUserCompressionSettings( Format *result, ImageSourceRef previewImage = ImageSourceRef() );
+	static bool getUserCompressionSettings( Format* result, ImageSourceRef previewImage = ImageSourceRef() );
 
 	/** \brief Appends a frame to the Movie. The optional \a duration parameter allows a frame to be inserted for a time other than the Format's default duration.
 		\note Calling addFrame() after a call to finish() will throw a MovieWriterExcAlreadyFinished exception.
 	**/
-	void addFrame( const ImageSourceRef &imageSource, float duration = -1.0f );
+	void addFrame( const ImageSourceRef& imageSource, float duration = -1.0f );
 	
 	//! Returns the number of frames in the movie
 	uint32_t	getNumFrames() const { return mNumFrames; }
@@ -148,7 +150,7 @@ class MovieWriter {
 	enum { CODEC_H264 = 'avc1', CODEC_JPEG = 'jpeg', CODEC_MP4 = 'mp4v', CODEC_PNG = 'png ', CODEC_RAW = 'raw ', CODEC_ANIMATION = 'rle ' };
 
   private:
-	void	createCompressionSession();
+	void createCompressionSession();
 	
 	static OSStatus encodedFrameOutputCallback( void *refCon, ICMCompressionSessionOptionsRef session, OSStatus err, ICMEncodedFrameRef encodedFrame, void *reserved );
 
