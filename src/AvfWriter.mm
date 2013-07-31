@@ -196,12 +196,13 @@ MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, c
 	if (compressionSettings)
 		[videoSettings setObject:compressionSettings forKey:AVVideoCompressionPropertiesKey];
 	
-	mWriterSink = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:videoSettings];
+	mWriterSink = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:nil];
 	[mWriter addInput:mWriterSink];
-	[mWriterSink setExpectsMediaDataInRealTime:true];
-	
+	[mWriterSink setExpectsMediaDataInRealTime:false];
+	/*
 	mSinkAdapater = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:mWriterSink
 																					 sourcePixelBufferAttributes:compressionSettings];
+	*/
 	[mWriter startWriting];
 	AVAssetWriterStatus status = [mWriter status];
 	if (status == AVAssetWriterStatusFailed) {
@@ -310,32 +311,61 @@ void MovieWriter::addFrame( const ImageSourceRef& imageSource, float duration )
 		
 	if( mFinished )
 		throw MovieWriterExcAlreadyFinished();
-
+	
+	NSError* error = nil;
+	AVAssetWriterStatus status = [mWriter status];
+	if (status == AVAssetWriterStatusFailed) {
+		error = [mWriter error];
+		NSString* str = [error description];
+		std::string descr = (str? std::string([str UTF8String]): "");
+		ci::app::console() << " Error when trying to start writing: " << descr << std::endl;
+		return;
+	}
+	::CFNumberRef timeValue = CFNumberCreate( kCFAllocatorDefault, kCFNumberFloatType, &mCurrentTimeValue );
 	CMSampleBufferRef sampleBuffer = convertSurfaceToCmSampleBuffer(imageSource);
+	CVBufferSetAttachment( (CVPixelBufferRef) sampleBuffer, kCVBufferTimeValueKey, timeValue, kCVAttachmentMode_ShouldNotPropagate );
+	//CMFormatDescriptionGetMediaType(CMFormatDescriptionRef desc) // crashes in this??
 	while (![mWriterSink isReadyForMoreMediaData]) {
+		ci::app::console() << "NOT YET ready for more samples" << std::endl;
 		continue;
 	}
+	ci::app::console() << "Ready for more samples" << std::endl;
+	
 	bool success = [mWriterSink appendSampleBuffer:sampleBuffer];
 	if (!success) {
 		ci::app::console() << "failed to append sample buffer." << std::endl;
 	}
+	//[mWriterSink markAsFinished];
 	
-	/*
+	return;
+	
+	
+	
 	if( duration <= 0 )
 		duration = mFormat.mDefaultTime;
 	
 	int64_t durationVal = static_cast<int64_t>( duration * mFormat.mTimeBase );
 	
-	CVPixelBufferRef pixelBuffer = createCvPixelBuffer( imageSource, false );
+//	CVPixelBufferRef pixelBuffer = createCvPixelBuffer( imageSource, false );
+//	CVPixelBufferLockBaseAddress(pixelBuffer, nil);
+//	CMTime time = CMTimeMakeWithSeconds(mCurrentTimeValue, mFormat.mTimeBase);
+//	[mSinkAdapater appendPixelBuffer:pixelBuffer withPresentationTime:time];
+//	CVPixelBufferUnlockBaseAddress(pixelBuffer, nil);
+//	CVPixelBufferRelease( pixelBuffer );
+	::CVPixelBufferRef pixelBuffer = createCvPixelBuffer( imageSource, false );
+	::CFNumberRef gammaLevel = CFNumberCreate( kCFAllocatorDefault, kCFNumberFloatType, &mFormat.mGamma );
+	::CVBufferSetAttachment( pixelBuffer, kCVImageBufferGammaLevelKey, gammaLevel, kCVAttachmentMode_ShouldPropagate );
+	::CFRelease( gammaLevel );
 	
+	CVPixelBufferLockBaseAddress(pixelBuffer, nil);
 	CMTime time = CMTimeMakeWithSeconds(mCurrentTimeValue, mFormat.mTimeBase);
 	[mSinkAdapater appendPixelBuffer:pixelBuffer withPresentationTime:time];
-	
+	CVPixelBufferUnlockBaseAddress(pixelBuffer, nil);
 	CVPixelBufferRelease( pixelBuffer );
-	
 	mCurrentTimeValue += durationVal;
 	++mNumFrames;
-	*/
+	
+	
 }
 
 extern "C" {
@@ -590,11 +620,15 @@ void MovieWriter::finish()
 	if( mMovie )
 		::DisposeMovie( mMovie );
 		*/
-
+	
+	[mWriterSink markAsFinished];
+	
 	NSError* error = nil;
 	bool success = [mWriter finishWriting];
 	if (!success)
 		error = [mWriter error];
+	
+	mFinished = true;
 }
 
 bool MovieWriter::getUserCompressionSettings( Format* result, ImageSourceRef imageSource )
