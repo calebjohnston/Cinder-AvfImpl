@@ -360,7 +360,7 @@ bool MovieBase::setRate( float rate )
 {
 	if (!mPlayer || !mPlayerItem) return false;
 	
-	bool success;
+	bool success = false;
 	
 	if (rate < -1.0f) {
 		success = [mPlayerItem canPlayFastReverse];
@@ -654,7 +654,9 @@ void MovieBase::createPlayerItemOutput(const AVPlayerItem* playerItem)
 {
 	NSDictionary* pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
 	mPlayerVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
-	[mPlayerVideoOutput setDelegate:mPlayerDelegate queue:dispatch_queue_create("movieVideoOutputQueue", DISPATCH_QUEUE_SERIAL)];
+	dispatch_queue_t queue = dispatch_queue_create("movieVideoOutputQueue", DISPATCH_QUEUE_SERIAL);
+	[mPlayerVideoOutput setDelegate:mPlayerDelegate queue:queue];
+	dispatch_release(queue);
 	[playerItem addOutput:mPlayerVideoOutput];
 }
 
@@ -998,6 +1000,7 @@ MovieLoader::MovieLoader( const Url &url )
 	AVPlayerItem* playerItem = [[AVPlayerItem alloc] initWithURL:asset_url];
 	mPlayer = [[AVPlayer alloc] init];
 	[mPlayer replaceCurrentItemWithPlayerItem:playerItem];	// starts the downloading process
+	[playerItem release];
 }
 
 MovieLoader::~MovieLoader()

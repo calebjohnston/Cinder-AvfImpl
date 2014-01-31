@@ -321,7 +321,7 @@ void MovieWriter::addFrame( const ImageSourceRef& imageSource, float duration )
 		ci::app::console() << " Error when trying to start writing: " << descr << std::endl;
 		return;
 	}
-	::CFNumberRef timeValue = CFNumberCreate( kCFAllocatorDefault, kCFNumberFloatType, &mCurrentTimeValue );
+	CFNumberRef timeValue = CFNumberCreate( kCFAllocatorDefault, kCFNumberDoubleType, &mCurrentTimeValue );
 	CMSampleBufferRef sampleBuffer = convertSurfaceToCmSampleBuffer(imageSource);
 	CMSampleBufferGetSampleSize(sampleBuffer, 0);
 	CMBlockBufferRef buffer = CMSampleBufferGetDataBuffer(sampleBuffer);
@@ -352,6 +352,10 @@ void MovieWriter::addFrame( const ImageSourceRef& imageSource, float duration )
 	ci::app::console() << "type id = " << typeId << std::endl;	// we want 350!
 	
 	//CVBufferSetAttachment( (CVPixelBufferRef) sampleBuffer, kCVBufferTimeValueKey, timeValue, kCVAttachmentMode_ShouldNotPropagate );
+	if (timeValue) {
+		CFRelease(timeValue);
+		timeValue = NULL;
+	}
 	//CMFormatDescriptionGetMediaType(CMFormatDescriptionRef desc) // crashes in this??
 	while (![mWriterSink isReadyForMoreMediaData]) {
 		ci::app::console() << "NOT YET ready for more samples" << std::endl;
@@ -421,7 +425,7 @@ OSStatus MovieWriter::encodedFrameOutputCallback( void *refCon, ICMCompressionSe
 	return result;
 	*/
 	
-	OSStatus result;
+	OSStatus result = noErr;
 	return result;
 }
 
@@ -455,7 +459,7 @@ OSStatus enableMultiPassWithTemporaryFile( ICMCompressionSessionOptionsRef inCom
     return status;
 	*/
 	
-	OSStatus result;
+	OSStatus result = noErr;
 	return result;
 }
 
