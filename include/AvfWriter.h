@@ -17,7 +17,7 @@
 	#endif
 
 	#if defined( __OBJC__ )
-		@class AVAsset, AVAssetWriter, AVAssetWriterInput, AVAssetWriterInputPixelBufferAdaptor;
+		@class AVAsset, AVAssetWriter, AVAssetWriterInput, AVAssetWriterInputPixelBufferAdaptor, NSDate;
 
 	#else
 		class AVAsset;
@@ -139,7 +139,8 @@ class MovieWriter {
 	/** \brief Appends a frame to the Movie. The optional \a duration parameter allows a frame to be inserted for a time other than the Format's default duration.
 		\note Calling addFrame() after a call to finish() will throw a MovieWriterExcAlreadyFinished exception.
 	**/
-	void addFrame( const ImageSourceRef& imageSource, float duration = -1.0f );
+//	void addFrame( const ImageSourceRef& imageSource, float duration = -1.0f );
+	void addFrame( const Surface8u& imageSource, float duration = -1.0f );
 	
 	//! Returns the number of frames in the movie
 	uint32_t	getNumFrames() const { return mNumFrames; }

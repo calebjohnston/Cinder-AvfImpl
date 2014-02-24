@@ -3,13 +3,15 @@
 
 #if defined( CINDER_COCOA )
 	#import <AVFoundation/AVFoundation.h>
+	#import <Foundation/Foundation.h>
 #endif
 
 #include "AvfUtils.h"
 #include "AvfWriter.h"
 
 namespace cinder { namespace avf {
-	
+
+NSDate* mStartTime;
 
 const float PLATFORM_DEFAULT_GAMMA = 2.2f;
 
@@ -169,7 +171,7 @@ const MovieWriter::Format& MovieWriter::Format::operator=( const Format &format 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MovieWriter
 MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, const Format &format )
-	: mPath( path ), mWidth( width ), mHeight( height ), mFormat( format ), mFinished( false )
+	: mPath( path ), mWidth( width ), mHeight( height ), mFormat( format ), mFinished( false ), mNumFrames(0)
 {
 //	AVFileTypeQuickTimeMovie
 //	AVFileTypeMPEG4
@@ -178,6 +180,7 @@ MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, c
 	NSURL* localOutputURL = [NSURL fileURLWithPath:[NSString stringWithCString:mPath.c_str() encoding:[NSString defaultCStringEncoding]]];
 	NSError* error = nil;
 	mWriter = [[AVAssetWriter alloc] initWithURL:localOutputURL fileType:AVFileTypeQuickTimeMovie error:&error];
+	
 	
 	// Compress to H.264 with the asset writer
 	/*
@@ -196,13 +199,16 @@ MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, c
 	if (compressionSettings)
 		[videoSettings setObject:compressionSettings forKey:AVVideoCompressionPropertiesKey];
 	
-	mWriterSink = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:nil];
-	[mWriter addInput:mWriterSink];
-	[mWriterSink setExpectsMediaDataInRealTime:false];
-	/*
+	mWriterSink = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:videoSettings];
+	[mWriterSink setExpectsMediaDataInRealTime:true];
+	
 	mSinkAdapater = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:mWriterSink
 																					 sourcePixelBufferAttributes:compressionSettings];
-	*/
+	
+	mStartTime = [NSDate date];
+	[mSinkAdapater retain];
+	[mWriter addInput:mWriterSink];
+	mWriter.movieFragmentInterval = CMTimeMakeWithSeconds(1.0, 1000);
 	[mWriter startWriting];
 	AVAssetWriterStatus status = [mWriter status];
 	if (status == AVAssetWriterStatusFailed) {
@@ -258,6 +264,8 @@ MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, c
 	mCurrentTimeValue = 0;
 	mNumFrames = 0;
 	*/
+	
+	ci::app::console() << "Constructor is finished! " << std::endl;
 }
 
 MovieWriter::~MovieWriter()
@@ -265,8 +273,9 @@ MovieWriter::~MovieWriter()
 	if( ! mFinished )
 		finish();
 }
-	
-void MovieWriter::addFrame( const ImageSourceRef& imageSource, float duration )
+
+void MovieWriter::addFrame( const Surface8u& imageSource, float duration )
+//void MovieWriter::addFrame( const ImageSourceRef& imageSource, float duration )
 {
 	/* RE-IMPLEMENT
 	if( mFinished )
@@ -314,13 +323,18 @@ void MovieWriter::addFrame( const ImageSourceRef& imageSource, float duration )
 	
 	NSError* error = nil;
 	AVAssetWriterStatus status = [mWriter status];
-	if (status == AVAssetWriterStatusFailed) {
+	if (AVAssetWriterStatusFailed == status) {
 		error = [mWriter error];
 		NSString* str = [error description];
 		std::string descr = (str? std::string([str UTF8String]): "");
 		ci::app::console() << " Error when trying to start writing: " << descr << std::endl;
 		return;
 	}
+	else if(AVAssetWriterStatusWriting != status) {
+		return;
+	}
+	
+	/*
 	::CFNumberRef timeValue = CFNumberCreate( kCFAllocatorDefault, kCFNumberFloatType, &mCurrentTimeValue );
 	CMSampleBufferRef sampleBuffer = convertSurfaceToCmSampleBuffer(imageSource);
 	CMSampleBufferGetSampleSize(sampleBuffer, 0);
@@ -366,7 +380,7 @@ void MovieWriter::addFrame( const ImageSourceRef& imageSource, float duration )
 	//[mWriterSink markAsFinished];
 	
 	return;
-	
+	*/
 	
 	
 	if( duration <= 0 )
@@ -380,20 +394,36 @@ void MovieWriter::addFrame( const ImageSourceRef& imageSource, float duration )
 //	[mSinkAdapater appendPixelBuffer:pixelBuffer withPresentationTime:time];
 //	CVPixelBufferUnlockBaseAddress(pixelBuffer, nil);
 //	CVPixelBufferRelease( pixelBuffer );
+	
+	
+//	AVAssetWriterInput* _input = [mSinkAdapater assetWriterInput];
+//	CVPixelBufferPoolRef poolRef = [mSinkAdapater pixelBufferPool];
+	
 	::CVPixelBufferRef pixelBuffer = createCvPixelBuffer( imageSource, false );
+//	CVPixelBufferRef pixelBuffer = NULL;
+//	CVReturn s = CVPixelBufferPoolCreatePixelBuffer (kCFAllocatorDefault, [mSinkAdapater pixelBufferPool], &pixelBuffer);
+//	GLubyte *pixelBufferData = (GLubyte *)CVPixelBufferGetBaseAddress(pixelBuffer);
+//	glReadPixels(0, 0, getWidth(), getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBufferData);
 	::CFNumberRef gammaLevel = CFNumberCreate( kCFAllocatorDefault, kCFNumberFloatType, &mFormat.mGamma );
 	::CVBufferSetAttachment( pixelBuffer, kCVImageBufferGammaLevelKey, gammaLevel, kCVAttachmentMode_ShouldPropagate );
 	::CFRelease( gammaLevel );
 	
 	CVPixelBufferLockBaseAddress(pixelBuffer, nil);
 	CMTime time = CMTimeMakeWithSeconds(mCurrentTimeValue, mFormat.mTimeBase);
-	[mSinkAdapater appendPixelBuffer:pixelBuffer withPresentationTime:time];
+//	NSDate* d = [NSDate date];
+//	double seconds = [d timeIntervalSinceDate:mStartTime];
+//	CMTime currentTime = CMTimeMakeWithSeconds(seconds,120);
+	static double seconds = 0;
+	seconds += 0.016667;
+	CMTime currentTime = CMTimeMakeWithSeconds(seconds,120);
+
+	[mSinkAdapater appendPixelBuffer:pixelBuffer withPresentationTime:currentTime];
 	CVPixelBufferUnlockBaseAddress(pixelBuffer, nil);
 	CVPixelBufferRelease( pixelBuffer );
 	mCurrentTimeValue += durationVal;
 	++mNumFrames;
 	
-	
+	ci::app::console() << "MovieWriter::addFrame is done..." << time.value << std::endl;
 }
 
 extern "C" {
@@ -657,6 +687,9 @@ void MovieWriter::finish()
 		error = [mWriter error];
 	
 	mFinished = true;
+	
+	
+	ci::app::console() << "finished.." << std::endl;
 }
 
 bool MovieWriter::getUserCompressionSettings( Format* result, ImageSourceRef imageSource )
