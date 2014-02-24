@@ -29,7 +29,7 @@ static void CVPixelBufferDealloc( void *refcon );
 //! Makes a cinder::Surface form a CVPixelBufferRef, setting a proper deallocation function to free the CVPixelBufferRef upon the destruction of the Surface::Obj
 Surface8u convertCvPixelBufferToSurface( CVPixelBufferRef pixelBufferRef );
 Surface8u convertCmSampleBufferToSurface( CMSampleBufferRef sampleBufferRef );
-CMSampleBufferRef convertSurfaceToCmSampleBuffer( const ImageSourceRef& imageSource );
+CMSampleBufferRef convertSurfaceToCmSampleBuffer( Surface8u source );
 //CVPixelBufferRef convertTextureToCvPixelBuffer( TextureRef source );
 
 typedef std::shared_ptr<class ImageTargetCvPixelBuffer> ImageTargetCvPixelBufferRef;
