@@ -29,10 +29,10 @@
 #endif
 
 // RE-IMPLEMENT
-typedef void* ICMCompressionSessionRef;
-typedef void* ICMCompressionSessionOptionsRef;
-typedef void* ICMEncodedFrameRef;
-typedef void* ICMMultiPassStorageRef;
+//typedef void* ICMCompressionSessionRef;
+//typedef void* ICMCompressionSessionOptionsRef;
+//typedef void* ICMEncodedFrameRef;
+//typedef void* ICMMultiPassStorageRef;
 
 namespace cinder { namespace avf {
 
@@ -46,7 +46,8 @@ class MovieWriter {
 	  public:
 		Format();
 		Format( uint32_t codec, float quality );
-		Format( const ICMCompressionSessionOptionsRef settings, uint32_t codec, float quality, float frameRate, bool enableMultiPass );
+//		Format( const ICMCompressionSessionOptionsRef settings, uint32_t codec, float quality, float frameRate, bool enableMultiPass );
+		Format( uint32_t codec, float quality, float frameRate, bool enableMultiPass = false );
 		Format( const Format &format );
 		~Format();
 
@@ -103,8 +104,6 @@ class MovieWriter {
 		float		mGamma;
 		bool		mEnableMultiPass;
 
-		ICMCompressionSessionOptionsRef		mOptions;
-
 		friend class MovieWriter;
 	};
 
@@ -152,17 +151,7 @@ class MovieWriter {
 
   private:
 	void createCompressionSession();
-	
-	static OSStatus encodedFrameOutputCallback( void *refCon, ICMCompressionSessionOptionsRef session, OSStatus err, ICMEncodedFrameRef encodedFrame, void *reserved );
 
-	/*
-	::Movie							mMovie;
-	::DataHandler					mDataHandler;
-	::Track							mTrack;
-	::Media							mMedia;
-	::ICMCompressionSessionRef		mCompressionSession;
-	::ICMCompressionPassModeFlags 	mMultiPassModeFlags;
-	*/
 	AVAssetWriter* mWriter;
 	AVAssetWriterInput* mWriterSink;
 	AVAssetWriterInputPixelBufferAdaptor* mSinkAdapater;
@@ -170,14 +159,12 @@ class MovieWriter {
 	fs::path		mPath;
 	uint32_t		mNumFrames;
 	int64_t			mCurrentTimeValue;
-	
-	int32_t		mWidth, mHeight;
-	Format		mFormat;
-	bool		mRequestedMultiPass, mDoingMultiPass, mFinished;		
+	int32_t			mWidth, mHeight;
+	Format			mFormat;
+	bool			mRequestedMultiPass, mDoingMultiPass, mFinished;
 
-	IoStreamRef		mMultiPassFrameCache;
-
-	std::vector<std::pair<int64_t,int64_t> >	mFrameTimes;
+//	IoStreamRef		mMultiPassFrameCache;
+//	std::vector<std::pair<int64_t,int64_t> >	mFrameTimes;
 };
 
 class MovieWriterExc : public Exception {
