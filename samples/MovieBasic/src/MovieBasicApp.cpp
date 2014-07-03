@@ -17,8 +17,6 @@ class MovieBasicApp : public AppNative {
 	void keyDown( KeyEvent event );
 	void mouseDown( MouseEvent event );
 	void mouseUp( MouseEvent event );
-	void touchesBegan( TouchEvent event );
-	void touchesEnded( TouchEvent event );
 	void fileDrop( FileDropEvent event );
 	
 	void update();
@@ -42,9 +40,8 @@ void MovieBasicApp::setup()
 
 void MovieBasicApp::keyDown( KeyEvent event )
 {
-	if( event.getChar() == 'f' ) {
+	if( event.getChar() == 'f' )
 		setFullScreen( !isFullScreen() );
-	}
 	else if( event.getChar() == 'o' ) {
 		fs::path moviePath = getOpenFilePath();
 		if( ! moviePath.empty() )
@@ -68,16 +65,6 @@ void MovieBasicApp::mouseUp( MouseEvent event )
 {
 }
 
-void MovieBasicApp::touchesBegan( TouchEvent event )
-{
-	if( mMovie )
-		mMovie->play( true );
-}
-
-void MovieBasicApp::touchesEnded( TouchEvent event )
-{
-}
-
 void MovieBasicApp::fileDrop( FileDropEvent event )
 {
 	loadMovieFile( event.getFile( 0 ) );
@@ -90,7 +77,7 @@ void MovieBasicApp::update()
 }
 
 void MovieBasicApp::draw()
-{
+{    
 	gl::clear();
 	gl::enableAlphaBlending();
 	
@@ -100,7 +87,8 @@ void MovieBasicApp::draw()
 	}
 	
 	if( mInfoTexture ) {
-		glDisable( GL_TEXTURE_RECTANGLE_ARB );
+        // error
+//		glDisable( GL_TEXTURE_RECTANGLE_ARB );
 		gl::draw( mInfoTexture, Vec2f( 20, getWindowHeight() - 20 - mInfoTexture.getHeight() ) );
 	}
 }
