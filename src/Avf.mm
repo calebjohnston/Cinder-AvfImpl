@@ -135,6 +135,8 @@ static void* AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output
 {
+    ci::app::console() << "outputSequenceWasFlushed" << std::endl;
+    
 	self->responder->outputSequenceWasFlushedCallback(output);
 }
 
@@ -178,6 +180,8 @@ MovieBase::~MovieBase()
 	
 float MovieBase::getPixelAspectRatio() const
 {
+    ci::app::console() << "MovieBase::getPixelAspectRatio" << std::endl;
+    
 	float pixelAspectRatio = 1.0;
 	
 	if (!mAsset) return pixelAspectRatio;
@@ -215,6 +219,8 @@ float MovieBase::getPixelAspectRatio() const
 
 bool MovieBase::checkPlayThroughOk()
 {
+    ci::app::console() << "MovieBase::checkPlayThroughOk" << std::endl;
+    
 	mPlayThroughOk = [mPlayerItem isPlaybackLikelyToKeepUp];
 	
 	return mPlayThroughOk;
@@ -222,6 +228,8 @@ bool MovieBase::checkPlayThroughOk()
 
 int32_t MovieBase::getNumFrames()
 {
+    ci::app::console() << "MovieBase::getNumFrames" << std::endl;
+    
 	if (mFrameCount <= 0)
 		mFrameCount = countFrames();
 	
@@ -230,6 +238,8 @@ int32_t MovieBase::getNumFrames()
 
 bool MovieBase::checkNewFrame()
 {
+    ci::app::console() << "MovieBase::checkNewFrame" << std::endl;
+    
 	if (!mPlayer || !mPlayerVideoOutput) return false;
 	
 	bool result;
@@ -248,6 +258,8 @@ bool MovieBase::checkNewFrame()
 
 float MovieBase::getCurrentTime() const
 {
+    ci::app::console() << "MovieBase::getCurrentTime" << std::endl;
+    
 	if (!mPlayer) return -1;
 	
 	return CMTimeGetSeconds([mPlayer currentTime]);
@@ -255,6 +267,8 @@ float MovieBase::getCurrentTime() const
 
 void MovieBase::seekToTime( float seconds )
 {
+    ci::app::console() << "MovieBase::seekToTime" << std::endl;
+    
 	if (!mPlayer) return;
 	
 	CMTime seek_time = CMTimeMakeWithSeconds(seconds, [mPlayer currentTime].timescale);
@@ -263,6 +277,8 @@ void MovieBase::seekToTime( float seconds )
 
 void MovieBase::seekToFrame( int frame )
 {
+    ci::app::console() << "MovieBase::seekToFrame" << std::endl;
+    
 	if (!mPlayer) return;
 	
 	CMTime currentTime = [mPlayer currentTime];
@@ -276,6 +292,8 @@ void MovieBase::seekToFrame( int frame )
 
 void MovieBase::seekToStart()
 {
+    ci::app::console() << "MovieBase::seekToStart" << std::endl;
+    
 	if (!mPlayer) return;
 	
 	[mPlayer seekToTime:kCMTimeZero];
@@ -283,6 +301,8 @@ void MovieBase::seekToStart()
 
 void MovieBase::seekToEnd()
 {
+    ci::app::console() << "MovieBase::seekToEnd" << std::endl;
+    
 	if (!mPlayer || !mPlayerItem) return;
 	
 	if (mPlayingForward) {
@@ -295,6 +315,8 @@ void MovieBase::seekToEnd()
 
 void MovieBase::setActiveSegment( float startTime, float duration )
 {
+    ci::app::console() << "MovieBase::setActiveSegment" << std::endl;
+    
 	if (!mPlayer || !mPlayerItem) return;
 	
 	int32_t scale = [mPlayer currentTime].timescale;
@@ -313,6 +335,8 @@ void MovieBase::setActiveSegment( float startTime, float duration )
 
 void MovieBase::resetActiveSegment()
 {
+    ci::app::console() << "MovieBase::resetActiveSegment" << std::endl;
+    
 	if (!mPlayer || !mPlayerItem) return;
 	
 	if (mPlayingForward) {
@@ -327,12 +351,16 @@ void MovieBase::resetActiveSegment()
 
 void MovieBase::setLoop( bool loop, bool palindrome )
 {
+    ci::app::console() << "MovieBase::setLoop" << std::endl;
+    
 	mLoop = loop;
 	mPalindrome = (loop? palindrome: false);
 }
 
 bool MovieBase::stepForward()
 {
+    ci::app::console() << "MovieBase::stepForward" << std::endl;
+    
 	if (!mPlayerItem) return false;
 	
 	bool can_step_forwards = [mPlayerItem canStepForward];
@@ -345,6 +373,8 @@ bool MovieBase::stepForward()
 
 bool MovieBase::stepBackward()
 {
+    ci::app::console() << "MovieBase::stepBackward" << std::endl;
+    
 	if (!mPlayerItem) return false;
 	
 	bool can_step_backwards = [mPlayerItem canStepBackward];
@@ -358,9 +388,11 @@ bool MovieBase::stepBackward()
 
 bool MovieBase::setRate( float rate )
 {
+    ci::app::console() << "MovieBase::setRate" << std::endl;
+    
 	if (!mPlayer || !mPlayerItem) return false;
 	
-	bool success;
+	bool success = false;
 	
 	if (rate < -1.0f) {
 		success = [mPlayerItem canPlayFastReverse];
@@ -379,6 +411,8 @@ bool MovieBase::setRate( float rate )
 
 void MovieBase::setVolume( float volume )
 {
+    ci::app::console() << "MovieBase::setVolume" << std::endl;
+    
 	if (!mPlayer) return;
 	
 #if defined( CINDER_COCOA_TOUCH )
@@ -402,6 +436,8 @@ void MovieBase::setVolume( float volume )
 
 float MovieBase::getVolume() const
 {
+    ci::app::console() << "MovieBase::getVolume" << std::endl;
+    
 	if (!mPlayer) return -1;
 	
 #if defined( CINDER_COCOA_TOUCH )
@@ -423,6 +459,8 @@ float MovieBase::getVolume() const
 
 bool MovieBase::isPlaying() const
 {
+    ci::app::console() << "MovieBase::isPlaying" << std::endl;
+    
 	if (!mPlayer) return false;
 	
 	return [mPlayer rate] != 0;
@@ -430,6 +468,8 @@ bool MovieBase::isPlaying() const
 
 bool MovieBase::isDone() const
 {
+    ci::app::console() << "MovieBase::isDone" << std::endl;
+    
 	if (!mPlayerItem) return false;
 	
 	CMTime current_time = [mPlayerItem currentTime];
@@ -439,6 +479,8 @@ bool MovieBase::isDone() const
 
 void MovieBase::play(bool toggle)
 {
+    ci::app::console() << "MovieBase::play" << std::endl;
+    
 	if (!mPlayer) {
 		mPlaying = true;
 		return;
@@ -454,6 +496,8 @@ void MovieBase::play(bool toggle)
 
 void MovieBase::stop()
 {
+    ci::app::console() << "MovieBase::stop" << std::endl;
+    
 	mPlaying = false;
 	
 	if (!mPlayer)
@@ -464,6 +508,8 @@ void MovieBase::stop()
 
 void MovieBase::init()
 {
+    ci::app::console() << "MovieBase::init" << std::endl;
+    
 	mHasAudio = mHasVideo = false;
 	mPlayThroughOk = mPlayable = mProtected = false;
 	mPlaying = mPlayingForward = true;
@@ -477,6 +523,8 @@ void MovieBase::init()
 	
 void MovieBase::initFromUrl( const Url& url )
 {
+    ci::app::console() << "MovieBase::initFromUrl" << std::endl;
+    
 	NSURL* asset_url = [NSURL URLWithString:[NSString stringWithCString:url.c_str() encoding:[NSString defaultCStringEncoding]]];
 	if (!asset_url)
 		throw AvfUrlInvalidExc();
@@ -493,6 +541,8 @@ void MovieBase::initFromUrl( const Url& url )
 
 void MovieBase::initFromPath( const fs::path& filePath )
 {
+    ci::app::console() << "MovieBase::initFromPath" << std::endl;
+    
 	NSURL* asset_url = [NSURL fileURLWithPath:[NSString stringWithCString:filePath.c_str() encoding:[NSString defaultCStringEncoding]]];
 	if (!asset_url)
 		throw AvfPathInvalidExc();
@@ -509,6 +559,8 @@ void MovieBase::initFromPath( const fs::path& filePath )
 
 void MovieBase::initFromLoader( const MovieLoader& loader )
 {
+    ci::app::console() << "MovieBase::initFromLoader" << std::endl;
+    
 	if (!loader.ownsMovie()) return;
 	
 	loader.waitForLoaded();
@@ -542,6 +594,8 @@ void MovieBase::initFromLoader( const MovieLoader& loader )
 
 void MovieBase::loadAsset()
 {
+    ci::app::console() << "MovieBase::loadAsset" << std::endl;
+    
 	NSArray* keyArray = [NSArray arrayWithObjects:@"tracks", @"duration", @"playable", @"hasProtectedContent", nil];
 	[mAsset loadValuesAsynchronouslyForKeys:keyArray completionHandler:^{
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -609,6 +663,8 @@ void MovieBase::updateFrame()
 
 uint32_t MovieBase::countFrames() const
 {
+    ci::app::console() << "MovieBase::countFrames" << std::endl;
+    
 	if (!mAsset) return 0;
 	
 	CMTime dur = [mAsset duration];
@@ -620,6 +676,8 @@ uint32_t MovieBase::countFrames() const
 
 void MovieBase::processAsssetTracks(AVAsset* asset)
 {
+    ci::app::console() << "MovieBase::processAsssetTracks" << std::endl;
+    
 	// process video tracks
 	NSArray* video_tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
 	mHasVideo = [video_tracks count] > 0;
@@ -652,6 +710,8 @@ void MovieBase::processAsssetTracks(AVAsset* asset)
 
 void MovieBase::createPlayerItemOutput(const AVPlayerItem* playerItem)
 {
+    ci::app::console() << "MovieBase::createPlayerItemOutput" << std::endl;
+    
 	NSDictionary* pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
 	mPlayerVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
 	[mPlayerVideoOutput setDelegate:mPlayerDelegate queue:dispatch_queue_create("movieVideoOutputQueue", DISPATCH_QUEUE_SERIAL)];
@@ -660,6 +720,8 @@ void MovieBase::createPlayerItemOutput(const AVPlayerItem* playerItem)
 
 void MovieBase::addObservers()
 {
+    ci::app::console() << "MovieBase::addObservers" << std::endl;
+    
 	if (mPlayerDelegate && mPlayerItem) {
 		// Determine if this is all we need out of the NotificationCenter
 		NSNotificationCenter* notification_center = [NSNotificationCenter defaultCenter];
@@ -687,6 +749,8 @@ void MovieBase::addObservers()
 
 void MovieBase::removeObservers()
 {
+    ci::app::console() << "MovieBase::removeObservers" << std::endl;
+    
 	if (mPlayerDelegate && mPlayerItem) {
 		NSNotificationCenter* notify_center = [NSNotificationCenter defaultCenter];
 		[notify_center removeObserver:mPlayerDelegate
@@ -708,6 +772,8 @@ void MovieBase::removeObservers()
 	
 void MovieBase::playerReady()
 {
+    ci::app::console() << "MovieBase::playerReady" << std::endl;
+    
 	mSignalReady();
 	
 	if (mPlaying) play();
@@ -715,6 +781,8 @@ void MovieBase::playerReady()
 	
 void MovieBase::playerItemEnded()
 {
+    ci::app::console() << "MovieBase::playerItemEnded" << std::endl;
+    
 	if (mPalindrome) {
 		float rate = -[mPlayer rate];
 		mPlayingForward = (rate >= 0);
@@ -729,16 +797,22 @@ void MovieBase::playerItemEnded()
 	
 void MovieBase::playerItemCancelled()
 {
+    ci::app::console() << "MovieBase::playerItemCancelled" << std::endl;
+    
 	mSignalCancelled();
 }
 	
 void MovieBase::playerItemJumped()
 {
+    ci::app::console() << "MovieBase::playerItemJumped" << std::endl;
+    
 	mSignalJumped();
 }
 
 void MovieBase::outputWasFlushed(AVPlayerItemOutput* output)
 {
+    ci::app::console() << "MovieBase::outputWasFlushed" << std::endl;
+    
 	mSignalOutputWasFlushed();
 }
 
@@ -746,16 +820,22 @@ void MovieBase::outputWasFlushed(AVPlayerItemOutput* output)
 // MovieSurface
 MovieSurface::MovieSurface( const Url& url ) : MovieBase()
 {
+    ci::app::console() << "MovieSurface::MovieSurface" << std::endl;
+    
 	MovieBase::initFromUrl( url );
 }
 
 MovieSurface::MovieSurface( const fs::path& path ) : MovieBase()
 {
+    ci::app::console() << "MovieSurface::MovieSurface" << std::endl;
+    
 	MovieBase::initFromPath( path );
 }
 
 MovieSurface::MovieSurface( const MovieLoader& loader ) : MovieBase()
 {
+    ci::app::console() << "MovieSurface::MovieSurface" << std::endl;
+    
 	MovieBase::initFromLoader( loader );
 }
 
@@ -766,6 +846,8 @@ MovieSurface::~MovieSurface()
 		
 bool MovieSurface::hasAlpha() const
 {
+    ci::app::console() << "MovieSurface::hasAlpha" << std::endl;
+    
 	if (mPlayerVideoOutput && mPlayer && [mPlayerVideoOutput hasNewPixelBufferForItemTime:[mPlayer currentTime]]) {
 		CVImageBufferRef pixel_buffer = nil;
 		pixel_buffer = [mPlayerVideoOutput copyPixelBufferForItemTime:[mPlayerItem currentTime] itemTimeForDisplay:nil];
@@ -790,7 +872,7 @@ bool MovieSurface::hasAlpha() const
 }
 
 Surface MovieSurface::getSurface()
-{
+{    
 	updateFrame();
 	
 	lock();
@@ -819,16 +901,22 @@ void MovieSurface::releaseFrame()
 // MovieGl
 MovieGl::MovieGl( const Url& url ) : MovieBase(), mVideoTextureRef(NULL), mVideoTextureCacheRef(NULL)
 {
+    ci::app::console() << "MovieGl::MovieGl" << std::endl;
+    
 	MovieBase::initFromUrl( url );
 }
 
 MovieGl::MovieGl( const fs::path& path ) : MovieBase(), mVideoTextureRef(NULL), mVideoTextureCacheRef(NULL)
 {
+    ci::app::console() << "MovieGl::MovieGl" << std::endl;
+    
 	MovieBase::initFromPath( path );
 }
 	
 MovieGl::MovieGl( const MovieLoader& loader ) : MovieBase(), mVideoTextureRef(NULL), mVideoTextureCacheRef(NULL)
 {
+    ci::app::console() << "MovieGl::MovieGl" << std::endl;
+    
 	MovieBase::initFromLoader(loader);
 }
 		
@@ -839,6 +927,8 @@ MovieGl::~MovieGl()
 	
 bool MovieGl::hasAlpha() const
 {
+    ci::app::console() << "MovieGl::hasAlpha" << std::endl;
+    
 	if (!mVideoTextureRef) return false;
 	
 	CVPixelBufferLockBaseAddress( mVideoTextureRef, 0 );
@@ -862,7 +952,7 @@ bool MovieGl::hasAlpha() const
 }
 
 const gl::Texture MovieGl::getTexture()
-{
+{    
 	updateFrame();
 	
 	lock();
@@ -874,10 +964,12 @@ const gl::Texture MovieGl::getTexture()
 	
 void MovieGl::allocateVisualContext()
 {
+    ci::app::console() << "MovieGl::allocateVisualContext" << std::endl;
+    
 	if(mVideoTextureCacheRef == NULL) {
 		CVReturn err = nil;
 #if defined( CINDER_COCOA_TOUCH )
-		ci::app::RendererGlRef renderer;
+		ci::app::RendererGlRef renderer = std::dynamic_pointer_cast<ci::app::RendererGl>(app::App::get()->getRenderer());
 		EAGLContext* context = renderer->getEaglContext();
 		err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, context, NULL, &mVideoTextureCacheRef);
 		
@@ -894,6 +986,8 @@ void MovieGl::allocateVisualContext()
 
 void MovieGl::deallocateVisualContext()
 {
+    ci::app::console() << "MovieGl::deallocateVisualContext" << std::endl;
+    
 	if(mVideoTextureRef) {
 		CFRelease(mVideoTextureRef);
 		mVideoTextureRef = NULL;
@@ -991,6 +1085,8 @@ MovieLoader::MovieLoader( const Url &url )
 :	mUrl(url), mBufferFull(false), mBufferEmpty(false), mLoaded(false),
 	mPlayable(false), mPlayThroughOK(false), mProtected(false), mOwnsMovie(true)
 {
+    ci::app::console() << "MovieLoader::MovieLoader" << std::endl;
+    
 	NSURL* asset_url = [NSURL URLWithString:[NSString stringWithCString:mUrl.c_str() encoding:[NSString defaultCStringEncoding]]];
 	if (!asset_url)
 		throw AvfUrlInvalidExc();
@@ -1009,6 +1105,8 @@ MovieLoader::~MovieLoader()
 	
 bool MovieLoader::checkLoaded() const
 {
+    ci::app::console() << "MovieLoader::checkLoaded" << std::endl;
+    
 	if( !mLoaded )
 		updateLoadState();
 	
@@ -1017,6 +1115,8 @@ bool MovieLoader::checkLoaded() const
 
 bool MovieLoader::checkPlayable() const
 {
+    ci::app::console() << "MovieLoader::checkPlayable" << std::endl;
+    
 	if( !mPlayable )
 		updateLoadState();
 	
@@ -1025,6 +1125,8 @@ bool MovieLoader::checkPlayable() const
 
 bool MovieLoader::checkPlayThroughOk() const
 {
+    ci::app::console() << "MovieLoader::checkPlayThroughOk" << std::endl;
+    
 	if( !mPlayThroughOK )
 		updateLoadState();
 	
@@ -1033,6 +1135,8 @@ bool MovieLoader::checkPlayThroughOk() const
 
 bool MovieLoader::checkProtection() const
 {
+    ci::app::console() << "MovieLoader::checkProtection" << std::endl;
+    
 	updateLoadState();
 	
 	return mProtected;
@@ -1040,6 +1144,8 @@ bool MovieLoader::checkProtection() const
 
 void MovieLoader::waitForLoaded() const
 {
+    ci::app::console() << "MovieLoader::waitForLoaded" << std::endl;
+    
 	// Accessing the AVAssets properties (such as duration, tracks, etc) will block the thread until they're available...
 	NSArray* video_tracks = [[[mPlayer currentItem] asset] tracksWithMediaType:AVMediaTypeVideo];
 	mLoaded = [video_tracks count] > 0;
@@ -1047,6 +1153,8 @@ void MovieLoader::waitForLoaded() const
 
 void MovieLoader::waitForPlayable() const
 {
+    ci::app::console() << "MovieLoader::waitForPlayable" << std::endl;
+    
 	while( !mPlayable ) {
 		cinder::sleep( 250 );
 		updateLoadState();
@@ -1055,6 +1163,8 @@ void MovieLoader::waitForPlayable() const
 
 void MovieLoader::waitForPlayThroughOk() const
 {
+    ci::app::console() << "MovieLoader::waitForPlayThroughOk" << std::endl;
+    
 	while( !mPlayThroughOK ) {
 		cinder::sleep( 250 );
 		updateLoadState();
@@ -1063,6 +1173,8 @@ void MovieLoader::waitForPlayThroughOk() const
 
 void MovieLoader::updateLoadState() const
 {
+    ci::app::console() << "MovieLoader::updateLoadState" << std::endl;
+    
 	AVPlayerItem* playerItem = [mPlayer currentItem];
 	mLoaded = mPlayable = [playerItem status] == AVPlayerItemStatusReadyToPlay;
 	mPlayThroughOK = [playerItem isPlaybackLikelyToKeepUp];
@@ -1072,13 +1184,13 @@ void MovieLoader::updateLoadState() const
 	app::console() << "  playback okay?: " << mPlayThroughOK << std::endl;
 	
 	//NSArray* loaded = [playerItem seekableTimeRanges];  // this value appears to be garbage (wtf?)
-	NSArray* loaded = [playerItem loadedTimeRanges];      // this value appears to be garbage (wtf?)
-	for (NSValue* value in loaded) {
-		CMTimeRange range = [value CMTimeRangeValue];
-		float start = CMTimeGetSeconds(range.start);
-		float dur = CMTimeGetSeconds(range.duration);
+//	NSArray* loaded = [playerItem loadedTimeRanges];      // this value appears to be garbage (wtf?)
+//	for (NSValue* value in loaded) {
+//		CMTimeRange range = [value CMTimeRangeValue];
+//		float start = CMTimeGetSeconds(range.start);
+//		float dur = CMTimeGetSeconds(range.duration);
 		//mLoaded = (CMTimeCompare([playerItem duration], range.duration) >= 0);
-	}
+//	}
 	
 	AVPlayerItemAccessLog* log = [playerItem accessLog];
 	if (log) {
