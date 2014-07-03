@@ -9,48 +9,49 @@
 /* Begin PBXBuildFile section */
 		0087D25512CD809F002CD69F /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0087D25412CD809F002CD69F /* CoreText.framework */; };
 		00CFDF6B1138442D0091E310 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00CFDF6A1138442D0091E310 /* CoreGraphics.framework */; };
+		1C202D786380417EBD059F94 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8113D31D0BC444C88AF06EB0 /* Default-568h@2x.png */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		28FD15000DC6FC520079059D /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD14FF0DC6FC520079059D /* OpenGLES.framework */; };
 		28FD15080DC6FC5B0079059D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
-		2C6CC66E25044096BBE22C97 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 48A47037928F479D8780C2F8 /* Default-568h@2x.png */; };
-		A5AC4ABC1965D6D900D159C5 /* MovieLoaderiOSApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AC4ABB1965D6D900D159C5 /* MovieLoaderiOSApp.cpp */; };
-		A5AC4ABE1965D6EB00D159C5 /* Avf.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5AC4ABD1965D6EB00D159C5 /* Avf.mm */; };
-		A5AC4AC01965D6F700D159C5 /* AvfUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5AC4ABF1965D6F700D159C5 /* AvfUtils.mm */; };
+		3C73C3D11783DEFE00452845 /* IosApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C73C3D01783DEFE00452845 /* IosApp.cpp */; };
+		3C73C3D31783DF0500452845 /* Avf.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C73C3D21783DF0500452845 /* Avf.mm */; };
+		3CA87C5F178B3FD300B4C712 /* AvfUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CA87C5E178B3FD300B4C712 /* AvfUtils.mm */; };
+		8413D643181D42E0BA20E75F /* CinderApp_ios.png in Resources */ = {isa = PBXBuildFile; fileRef = 0820685F6FF947FFBBDE8019 /* CinderApp_ios.png */; };
 		C725DFFE121DAC7F00FA186B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C727C02B121B400300192073 /* CoreMedia.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C725E001121DAC8F00FA186B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C725E000121DAC8F00FA186B /* AVFoundation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C725E001121DAC8FFFFA18FF /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00CFDF6A1138442D0091FFFF /* ImageIO.framework */; };
 		C727C02E121B400300192073 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C727C02D121B400300192073 /* CoreVideo.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		C7D7CD0BC55A46ABA276743F /* CinderApp_ios.png in Resources */ = {isa = PBXBuildFile; fileRef = FDC09A27563043D8ADDE5560 /* CinderApp_ios.png */; };
 		C7FB19D6124BC0D70045AFD2 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7FB19D5124BC0D70045AFD2 /* AudioToolbox.framework */; };
 		DDDDE001121DAC8FFFFADDDD /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDDDDF6A1138442D0091DDDD /* MobileCoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		00692BCF14FF149000D0A05E /* MovieLoader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieLoader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		00692BCF14FF149000D0A05E /* Cinder-AvfImpl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Cinder-AvfImpl.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0087D25412CD809F002CD69F /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		00CFDF6A1138442D0091E310 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		00CFDF6A1138442D0091FFFF /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		0820685F6FF947FFBBDE8019 /* CinderApp_ios.png */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = CinderApp_ios.png; path = ../resources/CinderApp_ios.png; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		28FD14FF0DC6FC520079059D /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		28FD15070DC6FC5B0079059D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		48A47037928F479D8780C2F8 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		4D5B1AD3B1BD4DF28BF349CE /* MovieLoader_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = MovieLoader_Prefix.pch; sourceTree = "<group>"; };
-		52E744C803574D4C8058DB4A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A5AC4ABB1965D6D900D159C5 /* MovieLoaderiOSApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MovieLoaderiOSApp.cpp; path = ../src/MovieLoaderiOSApp.cpp; sourceTree = "<group>"; };
-		A5AC4ABD1965D6EB00D159C5 /* Avf.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = Avf.mm; path = ../../../src/Avf.mm; sourceTree = "<group>"; };
-		A5AC4ABF1965D6F700D159C5 /* AvfUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AvfUtils.mm; path = ../../../src/AvfUtils.mm; sourceTree = "<group>"; };
-		A5AC4AC11965D74500D159C5 /* Avf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Avf.h; path = ../../../include/Avf.h; sourceTree = "<group>"; };
-		A5AC4AC21965D74500D159C5 /* AvfUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AvfUtils.h; path = ../../../include/AvfUtils.h; sourceTree = "<group>"; };
-		A5AC4AC41965D77C00D159C5 /* windtunnel_vectors_02w.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = windtunnel_vectors_02w.mov; sourceTree = "<group>"; };
+		2CA507D69FC94CA6B828C9A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		35C93B67B0A546BABFF283E0 /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../include/Resources.h; sourceTree = "<group>"; };
+		3C73C3D01783DEFE00452845 /* IosApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IosApp.cpp; path = ../src/IosApp.cpp; sourceTree = "<group>"; };
+		3C73C3D21783DF0500452845 /* Avf.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Avf.mm; path = ../src/Avf.mm; sourceTree = "<group>"; };
+		3C73C3D41783DF0E00452845 /* Avf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Avf.h; path = ../include/Avf.h; sourceTree = "<group>"; };
+		3CA87C5D178B3FC800B4C712 /* AvfUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AvfUtils.h; path = ../include/AvfUtils.h; sourceTree = "<group>"; };
+		3CA87C5E178B3FD300B4C712 /* AvfUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AvfUtils.mm; path = ../src/AvfUtils.mm; sourceTree = "<group>"; };
+		50375BA25CE8409AA9673E6B /* Cinder-AvfImpl_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cinder-AvfImpl_Prefix.pch"; sourceTree = "<group>"; };
+		8113D31D0BC444C88AF06EB0 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		A564B36819646B0600D45C5C /* windtunnel_vectors_02w.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = windtunnel_vectors_02w.mov; sourceTree = "<group>"; };
+		A5AC4ACA1965D99600D159C5 /* windtunnel_vectors_02w.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = windtunnel_vectors_02w.mov; sourceTree = "<group>"; };
 		C725E000121DAC8F00FA186B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C727C02B121B400300192073 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		C727C02D121B400300192073 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		C7FB19D5124BC0D70045AFD2 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DDDDDF6A1138442D0091DDDD /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		DE5F60727CA8443A80A049DF /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../include/Resources.h; sourceTree = "<group>"; };
-		FDC09A27563043D8ADDE5560 /* CinderApp_ios.png */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = CinderApp_ios.png; path = ../resources/CinderApp_ios.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,7 +92,7 @@
 		00692BD014FF149000D0A05E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				00692BCF14FF149000D0A05E /* MovieLoader.app */,
+				00692BCF14FF149000D0A05E /* Cinder-AvfImpl.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -118,9 +119,9 @@
 		00692BD914FF149000D0A05E /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				A5AC4ABD1965D6EB00D159C5 /* Avf.mm */,
-				A5AC4ABF1965D6F700D159C5 /* AvfUtils.mm */,
-				A5AC4ABB1965D6D900D159C5 /* MovieLoaderiOSApp.cpp */,
+				3C73C3D21783DF0500452845 /* Avf.mm */,
+				3CA87C5E178B3FD300B4C712 /* AvfUtils.mm */,
+				3C73C3D01783DEFE00452845 /* IosApp.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -128,10 +129,11 @@
 		00692BD914FF149000D0FFFF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				A5AC4AC31965D77C00D159C5 /* assets */,
-				FDC09A27563043D8ADDE5560 /* CinderApp_ios.png */,
-				48A47037928F479D8780C2F8 /* Default-568h@2x.png */,
-				52E744C803574D4C8058DB4A /* Info.plist */,
+				A5AC4AC91965D99600D159C5 /* assets */,
+				A564B36719646B0600D45C5C /* assets */,
+				0820685F6FF947FFBBDE8019 /* CinderApp_ios.png */,
+				8113D31D0BC444C88AF06EB0 /* Default-568h@2x.png */,
+				2CA507D69FC94CA6B828C9A6 /* Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -139,10 +141,10 @@
 		99692BD914FF149000D0A05F /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				A5AC4AC11965D74500D159C5 /* Avf.h */,
-				A5AC4AC21965D74500D159C5 /* AvfUtils.h */,
-				DE5F60727CA8443A80A049DF /* Resources.h */,
-				4D5B1AD3B1BD4DF28BF349CE /* MovieLoader_Prefix.pch */,
+				3C73C3D41783DF0E00452845 /* Avf.h */,
+				3CA87C5D178B3FC800B4C712 /* AvfUtils.h */,
+				35C93B67B0A546BABFF283E0 /* Resources.h */,
+				50375BA25CE8409AA9673E6B /* Cinder-AvfImpl_Prefix.pch */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -154,21 +156,30 @@
 			name = Blocks;
 			sourceTree = "<group>";
 		};
-		A5AC4AC31965D77C00D159C5 /* assets */ = {
+		A564B36719646B0600D45C5C /* assets */ = {
 			isa = PBXGroup;
 			children = (
-				A5AC4AC41965D77C00D159C5 /* windtunnel_vectors_02w.mov */,
+				A564B36819646B0600D45C5C /* windtunnel_vectors_02w.mov */,
 			);
 			name = assets;
-			path = ../../../assets;
+			path = ../assets;
+			sourceTree = "<group>";
+		};
+		A5AC4AC91965D99600D159C5 /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				A5AC4ACA1965D99600D159C5 /* windtunnel_vectors_02w.mov */,
+			);
+			name = assets;
+			path = ../assets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00692BCE14FF149000D0A05E /* MovieLoader */ = {
+		00692BCE14FF149000D0A05E /* Cinder-AvfImpl */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00692BF514FF149000D0A05E /* Build configuration list for PBXNativeTarget "MovieLoader" */;
+			buildConfigurationList = 00692BF514FF149000D0A05E /* Build configuration list for PBXNativeTarget "Cinder-AvfImpl" */;
 			buildPhases = (
 				00692BCB14FF149000D0A05E /* Sources */,
 				00692BCC14FF149000D0A05E /* Frameworks */,
@@ -178,9 +189,9 @@
 			);
 			dependencies = (
 			);
-			name = MovieLoader;
-			productName = MovieLoader;
-			productReference = 00692BCF14FF149000D0A05E /* MovieLoader.app */;
+			name = "Cinder-AvfImpl";
+			productName = CinderAvfPort;
+			productReference = 00692BCF14FF149000D0A05E /* Cinder-AvfImpl.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -189,8 +200,9 @@
 		00692BC614FF149000D0A05E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0510;
 			};
-			buildConfigurationList = 00692BC914FF149000D0A05E /* Build configuration list for PBXProject "MovieLoader" */;
+			buildConfigurationList = 00692BC914FF149000D0A05E /* Build configuration list for PBXProject "Cinder-AvfImpl" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -202,7 +214,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				00692BCE14FF149000D0A05E /* MovieLoader */,
+				00692BCE14FF149000D0A05E /* Cinder-AvfImpl */,
 			);
 		};
 /* End PBXProject section */
@@ -212,8 +224,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7D7CD0BC55A46ABA276743F /* CinderApp_ios.png in Resources */,
-				2C6CC66E25044096BBE22C97 /* Default-568h@2x.png in Resources */,
+				8413D643181D42E0BA20E75F /* CinderApp_ios.png in Resources */,
+				1C202D786380417EBD059F94 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,9 +236,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5AC4AC01965D6F700D159C5 /* AvfUtils.mm in Sources */,
-				A5AC4ABE1965D6EB00D159C5 /* Avf.mm in Sources */,
-				A5AC4ABC1965D6D900D159C5 /* MovieLoaderiOSApp.cpp in Sources */,
+				3C73C3D11783DEFE00452845 /* IosApp.cpp in Sources */,
+				3C73C3D31783DF0500452845 /* Avf.mm in Sources */,
+				3CA87C5F178B3FD300B4C712 /* AvfUtils.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,13 +249,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CINDER_PATH = ../../../../Cinder;
+				CINDER_PATH = ../../Cinder/cinder_0.8.5_mac;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -253,11 +271,16 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include";
@@ -268,17 +291,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CINDER_PATH = ../../../../Cinder;
+				CINDER_PATH = ../../Cinder/cinder_0.8.5_mac;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -293,10 +326,15 @@
 		00692BF614FF149000D0A05E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CINDER_PATH = ../../../../../../cinder_0.8.5_mac;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				CINDER_PATH = ../../../../cinder_0.8.5_mac;
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = MovieLoader_Prefix.pch;
+				GCC_PREFIX_HEADER = "Cinder-AvfImpl_Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				"GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]" = YES;
 				INFOPLIST_FILE = Info.plist;
 				"OTHER_LDFLAGS[sdk=iphoneos*][arch=*]" = (
 					"\"$(CINDER_PATH)/lib/libcinder-iphone_d.a\"",
@@ -306,7 +344,8 @@
 					"\"$(CINDER_PATH)/lib/libcinder-iphone-sim_d.a\"",
 					"-lz",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Cinder-AvfImpl";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -314,10 +353,15 @@
 		00692BF714FF149000D0A05E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CINDER_PATH = ../../../../../../cinder_0.8.5_mac;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				CINDER_PATH = ../../../../cinder_0.8.5_mac;
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = MovieLoader_Prefix.pch;
+				GCC_PREFIX_HEADER = "Cinder-AvfImpl_Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				"GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]" = YES;
 				INFOPLIST_FILE = Info.plist;
 				"OTHER_LDFLAGS[sdk=iphoneos*][arch=*]" = (
 					"\"$(CINDER_PATH)/lib/libcinder-iphone.a\"",
@@ -327,7 +371,8 @@
 					"\"$(CINDER_PATH)/lib/libcinder-iphone-sim.a\"",
 					"-lz",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Cinder-AvfImpl";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -335,7 +380,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00692BC914FF149000D0A05E /* Build configuration list for PBXProject "MovieLoader" */ = {
+		00692BC914FF149000D0A05E /* Build configuration list for PBXProject "Cinder-AvfImpl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00692BF314FF149000D0A05E /* Debug */,
@@ -344,7 +389,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		00692BF514FF149000D0A05E /* Build configuration list for PBXNativeTarget "MovieLoader" */ = {
+		00692BF514FF149000D0A05E /* Build configuration list for PBXNativeTarget "Cinder-AvfImpl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00692BF614FF149000D0A05E /* Debug */,
