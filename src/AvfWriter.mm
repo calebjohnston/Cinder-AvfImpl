@@ -11,6 +11,8 @@
 
 namespace cinder { namespace avf {
 
+NSDate* mStartTime;
+
 const float PLATFORM_DEFAULT_GAMMA = 2.2f;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,6 +164,7 @@ MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, c
 	mSinkAdapater = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:mWriterSink
 																					 sourcePixelBufferAttributes:compressionSettings];
 	
+	mStartTime = [NSDate date];
 	[mSinkAdapater retain];
 	[mWriter addInput:mWriterSink];
 	mWriter.movieFragmentInterval = CMTimeMakeWithSeconds(1.0, 1000);
@@ -245,20 +248,94 @@ void MovieWriter::addFrame( const Surface8u& imageSource, float duration )
 		return;
 	}
 	
+	/*
+	::CFNumberRef timeValue = CFNumberCreate( kCFAllocatorDefault, kCFNumberFloatType, &mCurrentTimeValue );
+	CMSampleBufferRef sampleBuffer = convertSurfaceToCmSampleBuffer(imageSource);
+	CMSampleBufferGetSampleSize(sampleBuffer, 0);
+	CMBlockBufferRef buffer = CMSampleBufferGetDataBuffer(sampleBuffer);
+	CMFormatDescriptionRef descr;
+	CMFormatDescriptionCreate(kCFAllocatorDefault, 350, kCMMediaType_Video, NULL, &descr);
+	CMSampleBufferRef sampleBuffer2;
+	size_t sizeArr[1] = { 0 };
+	CMSampleTimingInfo timingInfoArr[1];
+	timingInfoArr[0].duration = CMTimeMakeWithSeconds(duration, mFormat.mTimeBase);
+	timingInfoArr[0].presentationTimeStamp = CMTimeMakeWithSeconds(duration, mFormat.mTimeBase);
+	timingInfoArr[0].decodeTimeStamp = kCMTimeInvalid;
+	CMSampleBufferCreate(kCFAllocatorDefault, buffer, true, NULL, NULL, descr, 1, 1, timingInfoArr, 1, sizeArr, &sampleBuffer2);
+	CMTime timestamp = CMTimeMakeWithSeconds(duration, mFormat.mTimeBase);
+	CMSampleBufferSetOutputPresentationTimeStamp(sampleBuffer, timestamp);
+	descr = CMSampleBufferGetFormatDescription(sampleBuffer);
+	CMMediaType type = CMFormatDescriptionGetMediaType(descr);
+	if (type == kCMMediaType_Video) {
+		ci::app::console() << "media type is video..." << std::endl;
+	}
+	else {
+		ci::app::console() << "media type is NOT video..." << std::endl;	// disgusting!
+	}
+	CMItemCount sampleCount = CMSampleBufferGetNumSamples(sampleBuffer);
+	ci::app::console() << "sample count = " << sampleCount << std::endl;	// always zero --should not be!!
+	CMTime sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+	ci::app::console() << "sample time = " << CMTimeGetSeconds(sampleTime) << std::endl;	// illegit
+	CFTypeID typeId = CMSampleBufferGetTypeID();
+	ci::app::console() << "type id = " << typeId << std::endl;	// we want 350!
+	
+	//CVBufferSetAttachment( (CVPixelBufferRef) sampleBuffer, kCVBufferTimeValueKey, timeValue, kCVAttachmentMode_ShouldNotPropagate );
+	//CMFormatDescriptionGetMediaType(CMFormatDescriptionRef desc) // crashes in this??
+	while (![mWriterSink isReadyForMoreMediaData]) {
+		ci::app::console() << "NOT YET ready for more samples" << std::endl;
+		continue;
+	}
+	ci::app::console() << "Ready for more samples" << std::endl;
+	
+	bool success = [mWriterSink appendSampleBuffer:sampleBuffer];
+	if (!success) {
+		ci::app::console() << "failed to append sample buffer." << std::endl;
+	}
+	//[mWriterSink markAsFinished];
+	
+	return;
+	*/
+	
+	
 	if( duration <= 0 )
 		duration = mFormat.mDefaultTime;
 	
 	int64_t durationVal = static_cast<int64_t>( duration * mFormat.mTimeBase );
+    
+    // The general idea here is that we need to create a CVPixelBuffer from an existing pool
+    // this will allow the memory management to stay native to the GPU (and recycle the pixel
+    // buffer(s) when necessary)...
+    //
 	//CVPixelBufferGetDataSize([mSinkAdapter pixelBufferPool]);
-	CVPixelBufferPoolRef pbpool = [mSinkAdapater pixelBufferPool];
-	::CVPixelBufferRef pixelBuffer = createCvPixelBuffer( imageSource, pbpool, false );
+	//CVPixelBufferPoolRef pbpool = [mSinkAdapater pixelBufferPool];
+	//::CVPixelBufferRef pixelBuffer = createCvPixelBuffer( imageSource, pbpool, false );
 	// uncertain if this is meaningful...
+	
+//	CVPixelBufferRef pixelBuffer = createCvPixelBuffer( imageSource, false );
+//	CVPixelBufferLockBaseAddress(pixelBuffer, nil);
+//	CMTime time = CMTimeMakeWithSeconds(mCurrentTimeValue, mFormat.mTimeBase);
+//	[mSinkAdapater appendPixelBuffer:pixelBuffer withPresentationTime:time];
+//	CVPixelBufferUnlockBaseAddress(pixelBuffer, nil);
+//	CVPixelBufferRelease( pixelBuffer );
+	
+	
+//	AVAssetWriterInput* _input = [mSinkAdapater assetWriterInput];
+//	CVPixelBufferPoolRef poolRef = [mSinkAdapater pixelBufferPool];
+	
+	::CVPixelBufferRef pixelBuffer = createCvPixelBuffer( imageSource, false );
+//	CVPixelBufferRef pixelBuffer = NULL;
+//	CVReturn s = CVPixelBufferPoolCreatePixelBuffer (kCFAllocatorDefault, [mSinkAdapater pixelBufferPool], &pixelBuffer);
+//	GLubyte *pixelBufferData = (GLubyte *)CVPixelBufferGetBaseAddress(pixelBuffer);
+//	glReadPixels(0, 0, getWidth(), getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBufferData);
 	::CFNumberRef gammaLevel = CFNumberCreate( kCFAllocatorDefault, kCFNumberFloatType, &mFormat.mGamma );
 	::CVBufferSetAttachment( pixelBuffer, kCVImageBufferGammaLevelKey, gammaLevel, kCVAttachmentMode_ShouldPropagate );
 	::CFRelease( gammaLevel );
 	
 	CVPixelBufferLockBaseAddress(pixelBuffer, nil);
-	// THE FOLLOWING TIME VALUE IN SECONDS MUST BE VALID!!!
+	CMTime time = CMTimeMakeWithSeconds(mCurrentTimeValue, mFormat.mTimeBase);
+//	NSDate* d = [NSDate date];
+//	double seconds = [d timeIntervalSinceDate:mStartTime];
+//	CMTime currentTime = CMTimeMakeWithSeconds(seconds,120);
 	static double seconds = 0;
 	seconds += 0.016667;
 	CMTime currentTime = CMTimeMakeWithSeconds(seconds,120);
@@ -268,6 +345,8 @@ void MovieWriter::addFrame( const Surface8u& imageSource, float duration )
 	CVPixelBufferRelease( pixelBuffer );
 	mCurrentTimeValue += durationVal;
 	++mNumFrames;
+	
+	ci::app::console() << "MovieWriter::addFrame is done..." << time.value << std::endl;
 }
 
 extern "C" {
