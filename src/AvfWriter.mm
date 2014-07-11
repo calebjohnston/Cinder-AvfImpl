@@ -148,7 +148,7 @@ MovieWriter::MovieWriter( const fs::path &path, int32_t width, int32_t height, c
 	NSURL* localOutputURL = [NSURL fileURLWithPath:[NSString stringWithCString:mPath.c_str() encoding:[NSString defaultCStringEncoding]]];
 	NSError* error = nil;
 	mWriter = [[AVAssetWriter alloc] initWithURL:localOutputURL fileType:AVFileTypeQuickTimeMovie error:&error];
-	
+    
 	NSDictionary* compressionSettings = nil;
 	NSMutableDictionary* videoSettings = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										  AVVideoCodecH264, AVVideoCodecKey,
@@ -331,7 +331,7 @@ void MovieWriter::addFrame( const Surface8u& imageSource, float duration )
 	::CVBufferSetAttachment( pixelBuffer, kCVImageBufferGammaLevelKey, gammaLevel, kCVAttachmentMode_ShouldPropagate );
 	::CFRelease( gammaLevel );
 	
-	CVPixelBufferLockBaseAddress(pixelBuffer, nil);
+//	CVPixelBufferLockBaseAddress(pixelBuffer, nil);
 	CMTime time = CMTimeMakeWithSeconds(mCurrentTimeValue, mFormat.mTimeBase);
 //	NSDate* d = [NSDate date];
 //	double seconds = [d timeIntervalSinceDate:mStartTime];
@@ -341,7 +341,7 @@ void MovieWriter::addFrame( const Surface8u& imageSource, float duration )
 	CMTime currentTime = CMTimeMakeWithSeconds(seconds,120);
 
 	[mSinkAdapater appendPixelBuffer:pixelBuffer withPresentationTime:currentTime];
-	CVPixelBufferUnlockBaseAddress(pixelBuffer, nil);
+//	CVPixelBufferUnlockBaseAddress(pixelBuffer, nil);
 	CVPixelBufferRelease( pixelBuffer );
 	mCurrentTimeValue += durationVal;
 	++mNumFrames;
@@ -421,7 +421,6 @@ OSStatus enableMultiPassWithTemporaryFile( ICMCompressionSessionOptionsRef inCom
 	
 void MovieWriter::createCompressionSession()
 {
-	
 	//
 	// https://developer.apple.com/library/mac/documentation/AVFoundation/Reference/AVFoundation_Constants/Reference/reference.html#//apple_ref/doc/c_ref/AVVideoMaxKeyFrameIntervalKey
 	//
@@ -490,7 +489,6 @@ void MovieWriter::finish()
 
 bool MovieWriter::getUserCompressionSettings( Format* result, ImageSourceRef imageSource )
 {
-	
 	return false;
 }
 

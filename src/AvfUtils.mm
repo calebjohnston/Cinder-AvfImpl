@@ -384,64 +384,64 @@ ImageTargetCvPixelBufferRef ImageTargetCvPixelBuffer::createRef( ImageSourceRef 
 }
 
 	
-	ImageTargetCvPixelBuffer::ImageTargetCvPixelBuffer( ImageSourceRef imageSource, CVPixelBufferPoolRef pbPool, bool convertToYpCbCr )
+ImageTargetCvPixelBuffer::ImageTargetCvPixelBuffer( ImageSourceRef imageSource, CVPixelBufferPoolRef pbPool, bool convertToYpCbCr )
 	: ImageTarget(), mPixelBufferRef( 0 ), mConvertToYpCbCr( convertToYpCbCr )
-	{
-		setSize( (size_t)imageSource->getWidth(), (size_t)imageSource->getHeight() );
+{
+    setSize( (size_t)imageSource->getWidth(), (size_t)imageSource->getHeight() );
+	
+    //http://developer.apple.com/mac/library/qa/qa2006/qa1501.html
 		
-		//http://developer.apple.com/mac/library/qa/qa2006/qa1501.html
-		
-		// if we're converting to YCbCr, we'll load all of the data as RGB in terms of ci::ImageIo
-		// but we run color space conversion over it later in the finalize method
-		OSType formatType;
-		if( ! mConvertToYpCbCr ) {
-			switch( imageSource->getDataType() ) {
-					// for now all we support is 8 bit RGB(A)
-				case ImageIo::UINT16:
-				case ImageIo::FLOAT32:
-				case ImageIo::UINT8:
-					setDataType( ImageIo::UINT8 );
-					if( imageSource->hasAlpha () ) {
+    // if we're converting to YCbCr, we'll load all of the data as RGB in terms of ci::ImageIo
+    // but we run color space conversion over it later in the finalize method
+    OSType formatType;
+    if( ! mConvertToYpCbCr ) {
+        switch( imageSource->getDataType() ) {
+            // for now all we support is 8 bit RGB(A)
+            case ImageIo::UINT16:
+            case ImageIo::FLOAT32:
+            case ImageIo::UINT8:
+                setDataType( ImageIo::UINT8 );
+                if( imageSource->hasAlpha () ) {
 #if defined( CINDER_COCOA_TOUCH )
-						formatType = kCVPixelFormatType_32ARGB;
+                    formatType = kCVPixelFormatType_32ARGB;
 #elif defined( CINDER_COCOA )
-						formatType = k32ARGBPixelFormat;
+                    formatType = k32ARGBPixelFormat;
 #endif
-						setChannelOrder( ImageIo::ARGB );
-					}
-					else {
+                    setChannelOrder( ImageIo::ARGB );
+                }
+                else {
 #if defined( CINDER_COCOA_TOUCH )
-						formatType = kCVPixelFormatType_24RGB;
+                    formatType = kCVPixelFormatType_24RGB;
 #elif defined( CINDER_COCOA )
-						formatType = k24RGBPixelFormat;
+                    formatType = k24RGBPixelFormat;
 #endif
-						setChannelOrder( ImageIo::RGB );
-					}
-					setColorModel( ImageIo::CM_RGB );
-					break;
-				default:
-					throw ImageIoException();
-			}
-		}
-		else {
-			formatType = 'v408';/*k4444YpCbCrA8PixelFormat;*/
-			setDataType( ImageIo::UINT8 );
-			setChannelOrder( ImageIo::RGBA );
-			setColorModel( ImageIo::CM_RGB );
-		}
+                    setChannelOrder( ImageIo::RGB );
+                }
+                setColorModel( ImageIo::CM_RGB );
+                break;
+            default:
+                throw ImageIoException();
+        }
+    }
+    else {
+        formatType = 'v408';/*k4444YpCbCrA8PixelFormat;*/
+        setDataType( ImageIo::UINT8 );
+        setChannelOrder( ImageIo::RGBA );
+        setColorModel( ImageIo::CM_RGB );
+    }
 		
-		// TODO: Can we create the buffer from the pool????? Seems like no at first attempt --maybe a pixel buffer attributes mismatch?
-		CFMutableDictionaryRef attributes = CFDictionaryCreateMutable( kCFAllocatorDefault, 6, nil, nil );
-		dictionarySetPixelBufferOpenGLCompatibility( attributes );
-		CVReturn status = CVPixelBufferPoolCreatePixelBufferWithAuxAttributes(kCFAllocatorDefault, pbPool, attributes, &mPixelBufferRef);
-		if( kCVReturnSuccess != status )
-			throw ImageIoException();
+    // TODO: Can we create the buffer from the pool????? Seems like no at first attempt --maybe a pixel buffer attributes mismatch?
+    CFMutableDictionaryRef attributes = CFDictionaryCreateMutable( kCFAllocatorDefault, 6, nil, nil );
+    dictionarySetPixelBufferOpenGLCompatibility( attributes );
+    CVReturn status = CVPixelBufferPoolCreatePixelBufferWithAuxAttributes(kCFAllocatorDefault, pbPool, attributes, &mPixelBufferRef);
+    if( kCVReturnSuccess != status )
+        throw ImageIoException();
 		
-		if( ::CVPixelBufferLockBaseAddress( mPixelBufferRef, 0 ) != kCVReturnSuccess )
-			throw ImageIoException();
-		mData = reinterpret_cast<uint8_t*>( ::CVPixelBufferGetBaseAddress( mPixelBufferRef ) );
-		mRowBytes = ::CVPixelBufferGetBytesPerRow( mPixelBufferRef );
-	}
+    if( ::CVPixelBufferLockBaseAddress( mPixelBufferRef, 0 ) != kCVReturnSuccess )
+        throw ImageIoException();
+    mData = reinterpret_cast<uint8_t*>( ::CVPixelBufferGetBaseAddress( mPixelBufferRef ) );
+    mRowBytes = ::CVPixelBufferGetBytesPerRow( mPixelBufferRef );
+}
 	
 ImageTargetCvPixelBuffer::ImageTargetCvPixelBuffer( ImageSourceRef imageSource, bool convertToYpCbCr )
 	: ImageTarget(), mPixelBufferRef( 0 ), mConvertToYpCbCr( convertToYpCbCr )
@@ -575,7 +575,7 @@ CVPixelBufferRef createCvPixelBuffer( ImageSourceRef imageSource, bool convertTo
 }
 	
 CVPixelBufferRef createCvPixelBuffer( ImageSourceRef imageSource, CVPixelBufferPoolRef pbPool, bool convertToYpCbCr )
-{
+{    
 	ImageTargetCvPixelBufferRef target = ImageTargetCvPixelBuffer::createRef( imageSource, pbPool, convertToYpCbCr );
 	imageSource->load( target );
 	target->finalize();

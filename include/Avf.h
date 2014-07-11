@@ -141,7 +141,7 @@ class MovieBase {
 	signals::signal<void()>&	getEndedSignal() { return mSignalEnded; }
 	signals::signal<void()>&	getJumpedSignal() { return mSignalJumped; }
 	signals::signal<void()>&	getOutputWasFlushedSignal() { return mSignalOutputWasFlushed; }
-	
+
  protected:
 	MovieBase();
 	void init();
@@ -279,6 +279,7 @@ public:
 	void playerItemDidNotReachEndCallback() { mParent->playerItemCancelled(); }
 	void playerItemTimeJumpedCallback() { mParent->playerItemJumped(); }
 	void outputSequenceWasFlushedCallback(AVPlayerItemOutput* output) { mParent->outputWasFlushed(output); }
+    void playerUpdateFrame() { mParent->updateFrame(); }
 	
 private:
 	MovieBase* const mParent;

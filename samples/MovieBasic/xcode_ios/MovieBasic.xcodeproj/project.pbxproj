@@ -16,6 +16,7 @@
 		A5AC4AAE19659F3300D159C5 /* MovieBasiciOSApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AC4AAD19659F3300D159C5 /* MovieBasiciOSApp.cpp */; };
 		A5AC4AB019659F9B00D159C5 /* Avf.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5AC4AAF19659F9B00D159C5 /* Avf.mm */; };
 		A5AC4AB219659FAC00D159C5 /* AvfUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5AC4AB119659FAC00D159C5 /* AvfUtils.mm */; };
+		A5D5C2FA19703582000DA4E3 /* windtunnel_vectors_02w.mov in Resources */ = {isa = PBXBuildFile; fileRef = A5D5C2F919703582000DA4E3 /* windtunnel_vectors_02w.mov */; };
 		C725DFFE121DAC7F00FA186B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C727C02B121B400300192073 /* CoreMedia.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C725E001121DAC8F00FA186B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C725E000121DAC8F00FA186B /* AVFoundation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C725E001121DAC8FFFFA18FF /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00CFDF6A1138442D0091FFFF /* ImageIO.framework */; };
@@ -43,7 +44,7 @@
 		A5AC4AAD19659F3300D159C5 /* MovieBasiciOSApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MovieBasiciOSApp.cpp; path = ../src/MovieBasiciOSApp.cpp; sourceTree = "<group>"; };
 		A5AC4AAF19659F9B00D159C5 /* Avf.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = Avf.mm; path = ../../../src/Avf.mm; sourceTree = "<group>"; };
 		A5AC4AB119659FAC00D159C5 /* AvfUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AvfUtils.mm; path = ../../../src/AvfUtils.mm; sourceTree = "<group>"; };
-		A5AC4AC61965D84100D159C5 /* windtunnel_vectors_02w.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = windtunnel_vectors_02w.mov; sourceTree = "<group>"; };
+		A5D5C2F919703582000DA4E3 /* windtunnel_vectors_02w.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; name = windtunnel_vectors_02w.mov; path = ../../../assets/windtunnel_vectors_02w.mov; sourceTree = "<group>"; };
 		BBB1C574F2AD457280E252D0 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		C725E000121DAC8F00FA186B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C727C02B121B400300192073 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
@@ -79,6 +80,7 @@
 		00692BC414FF149000D0A05E = {
 			isa = PBXGroup;
 			children = (
+				A5D5C2F919703582000DA4E3 /* windtunnel_vectors_02w.mov */,
 				99692BD914FF149000DFFFFF /* Blocks */,
 				99692BD914FF149000D0A05F /* Headers */,
 				00692BD914FF149000D0A05E /* Source */,
@@ -128,7 +130,6 @@
 		00692BD914FF149000D0FFFF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				A5AC4AC51965D84100D159C5 /* assets */,
 				E5EE00A7E0A14C6FB40FBE9F /* CinderApp_ios.png */,
 				BBB1C574F2AD457280E252D0 /* Default-568h@2x.png */,
 				932AE764F1B74B2CB4B3CAF3 /* Info.plist */,
@@ -152,15 +153,6 @@
 			children = (
 			);
 			name = Blocks;
-			sourceTree = "<group>";
-		};
-		A5AC4AC51965D84100D159C5 /* assets */ = {
-			isa = PBXGroup;
-			children = (
-				A5AC4AC61965D84100D159C5 /* windtunnel_vectors_02w.mov */,
-			);
-			name = assets;
-			path = ../../../assets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -213,6 +205,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5D5C2FA19703582000DA4E3 /* windtunnel_vectors_02w.mov in Resources */,
 				F85F9559321749F997273020 /* CinderApp_ios.png in Resources */,
 				CC6803854D5D4A89A8A28169 /* Default-568h@2x.png in Resources */,
 			);
