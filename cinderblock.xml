@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block	name="Cinder-AvfImpl"
+		git="https://github.com/calebjohnston/Cinder-AvfImpl.git"
+		author="Caleb Johnston"
+		summary="A new implementation of the QuickTime internals using AV Foundation"
+		url="https://github.com/calebjohnston/Cinder-AvfImpl">
+	<supports os="macosx" />
+	<supports os="ios" />
+	<header>include/Avf.h</header>
+	<header>include/AvfUtils.h</header>
+	<header>include/AvfWriter.h</header>
+	<source>src/Avf.mm</source>
+	<source>src/AvfUtils.mm</source>
+	<source>src/AvfWriter.mm</source>
+	<platform os="macosx">
+		<framework sdk="true">AVFoundation.framework</framework>
+		<framework sdk="true">CoreMedia.framework</framework>
+	</platform>
+	<includePath>include</includePath>
+</block>
+</cinder>
