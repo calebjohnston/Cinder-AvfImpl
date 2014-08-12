@@ -41,7 +41,11 @@ void MovieLoaderApp::update()
 void MovieLoaderApp::draw()
 {
 	// clear out the window with black
-	gl::clear(); 
+	gl::clear();
+	
+	if( mMovie->isPlaying() && mMovie->getTexture() ){
+		gl::draw(mMovie->getTexture(), Rectf(app::getWindowBounds()));
+	}
 }
 
 void MovieLoaderApp::movieReady()

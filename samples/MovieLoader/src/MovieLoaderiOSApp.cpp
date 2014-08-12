@@ -20,7 +20,7 @@ class MovieLoaderApp : public AppNative {
   private:
 	void movieReady();
 	
-	avf::MovieSurfaceRef	mMovie;
+	avf::MovieSurfaceRef mMovie;
 	avf::MovieLoaderRef mLoader;
 };
 
@@ -33,7 +33,7 @@ void MovieLoaderApp::setup()
 
 void MovieLoaderApp::update()
 {
-	if( mLoader && !mMovie->isPlaying() && mLoader->checkPlayThroughOk()) {
+	if( mLoader && !mMovie->isPlaying() && mLoader->checkPlayThroughOk() ){
 		movieReady();
 	}
 }
@@ -41,7 +41,11 @@ void MovieLoaderApp::update()
 void MovieLoaderApp::draw()
 {
 	// clear out the window with black
-	gl::clear(); 
+	gl::clear();
+	
+	if( mMovie->isPlaying() && mMovie->getSurface() ){
+		gl::draw(mMovie->getSurface(), Rectf(app::getWindowBounds()));
+	}
 }
 
 void MovieLoaderApp::movieReady()
