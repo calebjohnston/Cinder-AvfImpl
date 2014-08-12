@@ -13,14 +13,13 @@ using namespace std;
 class MovieLoaderApp : public AppNative {
   public:
 	void setup();
-	void mouseDown( MouseEvent event );
+
 	void update();
 	void draw();
 	
   private:
 	void movieReady();
 	
-	gl::Texture mFrameTexture, mInfoTexture;
 	avf::MovieGlRef	mMovie;
 	avf::MovieLoaderRef mLoader;
 };
@@ -32,13 +31,9 @@ void MovieLoaderApp::setup()
 	mMovie = avf::MovieGl::create(mLoader);
 }
 
-void MovieLoaderApp::mouseDown( MouseEvent event )
-{
-}
-
 void MovieLoaderApp::update()
 {
-	if( mLoader && !mMovie->isPlaying() && mLoader->checkPlayThroughOk()){
+	if( mLoader && !mMovie->isPlaying() && mLoader->checkPlayThroughOk()) {
 		movieReady();
 	}
 }
@@ -52,17 +47,6 @@ void MovieLoaderApp::draw()
 void MovieLoaderApp::movieReady()
 {
 	mMovie->play();
-	
-	// create a texture for showing some info about the movie
-	TextLayout infoText;
-	infoText.clear( ColorA( 0.2f, 0.2f, 0.2f, 0.5f ) );
-	infoText.setColor( Color::white() );
-	infoText.addLine( toString( mMovie->getWidth() ) + " x " + toString( mMovie->getHeight() ) + " pixels" );
-	infoText.addLine( toString( mMovie->getDuration() ) + " seconds" );
-	infoText.addLine( toString( mMovie->getNumFrames() ) + " frames" );
-	infoText.addLine( toString( mMovie->getFramerate() ) + " fps" );
-	infoText.setBorder( 4, 2 );
-	mInfoTexture = gl::Texture( infoText.render( true ) );
 }
 
 CINDER_APP_NATIVE( MovieLoaderApp, RendererGl )

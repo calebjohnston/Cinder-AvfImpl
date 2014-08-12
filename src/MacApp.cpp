@@ -7,6 +7,7 @@
 class MacApp : public ci::app::AppNative {
   public:
 	void setup();
+    void prepareSettings( ci::app::AppBasic::Settings *settings );
 	void keyDown( ci::app::KeyEvent event );
 	void keyUp( ci::app::KeyEvent event );
 	void mouseDown( ci::app::MouseEvent event );
@@ -18,13 +19,11 @@ class MacApp : public ci::app::AppNative {
 	void movieEnded();
 	void playerReady();
 	
-	bool mMovieSelected;
 	uint32_t mFrameCount;
 	uint32_t mMovieFrameCount;
 	ci::gl::Texture mTexture;
 	ci::Surface mSurface;
 	ci::avf::MovieGlRef mMovie;
-//	ci::avf::MovieSurfaceRef mMovie;
 	ci::avf::MovieLoaderRef mMovieLoader;
 };
 
@@ -32,10 +31,13 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+void MacApp::prepareSettings(ci::app::AppBasic::Settings *settings) {
+    settings->setWindowSize(3840/2, 2160/2); // for 4k videos
+}
+
 void MacApp::setup()
 {
 	mMovieFrameCount = mFrameCount = 0;
-	mMovieSelected = false;
 	
 	setFrameRate(60);
 	
@@ -45,25 +47,18 @@ void MacApp::setup()
 		fs::path movie_path = getOpenFilePath();
 		if( !movie_path.empty() ) {
 			mMovie = avf::MovieGl::create(movie_path);
-//			mMovie = avf::MovieSurface::create(movie_path);
-			mMovieSelected = true;
 		}
 	}
 	else if (false) {
 		Url url("http://www.calebjohnston.com/storage/windtunnel_vectors_02w.mov");
 		//Url url("http://www.calebjohnston.com/storage/windtunnel_new-solver02.mov");
 		mMovie = avf::MovieGl::create(url);
-//		mMovie = avf::MovieSurface::create(url);
-		mMovieSelected = true;
 	}
 	else {
 		Url url("http://www.calebjohnston.com/storage/windtunnel_vectors_02w.mov");
 		//Url url("http://www.calebjohnston.com/storage/windtunnel_vectors_02w.mov");
-		//mMovieLoader = avf::MovieLoader::create(url);
 		mMovieLoader = avf::MovieLoader::create(url);
 		mMovie = avf::MovieGl::create(mMovieLoader);
-//		mMovie = avf::MovieSurface::create(*mMovieLoader);
-		mMovieSelected = true;
 	}
 	
 	//mPlayer->load(Url("/Users/Caleb/Movies/Ford_Intro.mov"));
@@ -71,18 +66,19 @@ void MacApp::setup()
 	
 #else
 	//	fs::path app_path = cinder::app::App::getAppPath();
-	mMovieSelected = true;
 	fs::path asset_path = getResourcePath("assets");
 	fs::path url_path = getResourcePath("assets/Ford_Intro.mov");
 	mMovie = avf::MovieGl::create(Url(url_path.string()));
 	
 #endif
 	
-	if (mMovieSelected) {
+	if (mMovie) {
 		mMovie->getReadySignal().connect(boost::bind(&MacApp::playerReady, this));
 		mMovie->getNewFrameSignal().connect(boost::bind(&MacApp::newMovieFrame, this));
 		mMovie->getEndedSignal().connect(boost::bind(&MacApp::movieEnded, this));
 	}
+    
+    ci::app::console() << "MacApp::setup -------- " << std::endl;
 }
 
 void MacApp::keyDown( KeyEvent event )
@@ -128,7 +124,6 @@ void MacApp::keyDown( KeyEvent event )
 
 void MacApp::keyUp( KeyEvent event )
 {
-	
 }
 
 void MacApp::mouseDown( MouseEvent event )
@@ -149,17 +144,13 @@ void MacApp::playerReady()
 void MacApp::movieEnded()
 {
 	console() << "measured total number of frames = " << mMovieFrameCount << std::endl;
-	
-	mMovieSelected = false;
-	
+		
 	fs::path movie_path = getOpenFilePath();
 	if( !movie_path.empty() ) {
 		mMovie = avf::MovieGl::create(movie_path);
 		mMovie->getEndedSignal().connect(boost::bind(&MacApp::movieEnded, this));
 		mMovie->play();
-		
-		mMovieSelected = true;
-	}
+    }
 }
 
 void MacApp::newMovieFrame()
@@ -169,10 +160,8 @@ void MacApp::newMovieFrame()
 
 void MacApp::update()
 {
-	if (mMovieSelected) {
+	if (mMovie) {
 		mTexture = mMovie->getTexture();
-//		mSurface = mMovie->getSurface();
-//		if (mSurface) mTexture = gl::Texture(mSurface);
 	}
 }
 
@@ -181,7 +170,7 @@ void MacApp::draw()
 	// clear out the window with black
 	gl::clear( Color( 0, 0, 0 ) );
 	
-	if (!mMovieSelected) return;
+	if (!mMovie) return;
 	
 	if (mTexture) {
 		//gl::color(0.1,0.1,0.1,0.1);
@@ -191,8 +180,6 @@ void MacApp::draw()
 	
 	if (mFrameCount >= 30) {
 		mFrameCount = 0;
-		int fps = static_cast<int>(getAverageFps());
-		//console() << "fps: " << fps << std::endl;
 	}
 	else {
 		mFrameCount++;

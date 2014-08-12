@@ -3,12 +3,12 @@
 #include "cinder/Url.h"
 
 #if defined( CINDER_COCOA )
-	#import <AVFoundation/AVFoundation.h>
-	#if defined( CINDER_COCOA_TOUCH )
-		#import <CoreVideo/CoreVideo.h>
-	#else
-		#import <CoreVideo/CVDisplayLink.h>
-	#endif
+    #import <AVFoundation/AVFoundation.h>
+    #if defined( CINDER_COCOA_TOUCH )
+        #import <CoreVideo/CoreVideo.h>
+    #else
+        #import <CoreVideo/CVDisplayLink.h>
+    #endif
 #endif
 
 #include "Avf.h"
@@ -26,9 +26,15 @@ static void* AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 @interface MovieDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
 	ci::avf::MovieResponder* responder;
+#if defined( CINDER_COCOA_TOUCH )
+    CADisplayLink* displayLink;
+#endif
 }
 
 - (id)initWithResponder:(ci::avf::MovieResponder*)player;
+#if defined( CINDER_COCOA_TOUCH )
+- (void)initDisplayLink;
+#endif
 - (void)playerReady;
 - (void)playerItemDidReachEndCallback;
 - (void)playerItemDidNotReachEndCallback;
@@ -47,6 +53,9 @@ static void* AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 
 - (void)dealloc
 {
+#if defined( CINDER_COCOA_TOUCH )
+    [self->displayLink release];
+#endif
 	[super dealloc];
 }
 
@@ -54,15 +63,34 @@ static void* AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 {
 	self = [super init];
 	self->responder = nil;
-	return self;
+
+#if defined( CINDER_COCOA_TOUCH )
+    [self initDisplayLink];
+#endif
+    return self;
 }
 
 - (id)initWithResponder:(ci::avf::MovieResponder*)player
 {
 	self = [super init];
 	self->responder = player;
+
+#if defined( CINDER_COCOA_TOUCH )
+    [self initDisplayLink];
+#endif
 	return self;
 }
+
+#if defined( CINDER_COCOA_TOUCH )
+- (void)initDisplayLink
+{
+    [self->displayLink invalidate];
+    self->displayLink = nil;
+    
+    self->displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback:)] ;
+    [self->displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+}
+#endif
 
 - (void)playerReady
 {
@@ -114,8 +142,10 @@ static void* AVPlayerItemStatusContext = &AVPlayerItemStatusContext;
 - (void)displayLinkCallback:(CVDisplayLinkRef*)sender
 #endif
 {
-	ci::app::console() << "displayLinkCallback" << std::endl;
-	
+#if defined( CINDER_COCOA_TOUCH )
+    self->responder->playerUpdateFrame();
+#endif
+    
 	/*
 	 CMTime outputItemTime = kCMTimeInvalid;
 	 
@@ -360,7 +390,7 @@ bool MovieBase::setRate( float rate )
 {
 	if (!mPlayer || !mPlayerItem) return false;
 	
-	bool success;
+	bool success = false;
 	
 	if (rate < -1.0f) {
 		success = [mPlayerItem canPlayFastReverse];
@@ -474,7 +504,7 @@ void MovieBase::init()
 	mDuration = -1;
 	mFrameCount = -1;
 }
-	
+    
 void MovieBase::initFromUrl( const Url& url )
 {
 	NSURL* asset_url = [NSURL URLWithString:[NSString stringWithCString:url.c_str() encoding:[NSString defaultCStringEncoding]]];
@@ -551,25 +581,33 @@ void MovieBase::loadAsset()
 			AVKeyValueStatus status = [mAsset statusOfValueForKey:@"tracks" error:&error];
 			if (status == AVKeyValueStatusLoaded && !error) {
 				processAsssetTracks(mAsset);
-			}
+			} else {
+                ci::app::console() << "AVKeyValueStatusLoaded error -- tracks" << std::endl;
+            }
 			
 			error = nil;
 			status = [mAsset statusOfValueForKey:@"duration" error:&error];
 			if (status == AVKeyValueStatusLoaded && !error) {
 				mDuration = (float) CMTimeGetSeconds([mAsset duration]);
-			}
+			} else {
+                ci::app::console() << "AVKeyValueStatusLoaded error -- duration" << std::endl;
+            }
 			
 			error = nil;
 			status = [mAsset statusOfValueForKey:@"playable" error:&error];
 			if (status == AVKeyValueStatusLoaded && !error) {
 				mPlayable = [mAsset isPlayable];
-			}
+			} else {
+                ci::app::console() << "AVKeyValueStatusLoaded error -- playable" << std::endl;
+            }
 			
 			error = nil;
 			status = [mAsset statusOfValueForKey:@"hasProtectedContent" error:&error];
 			if (status == AVKeyValueStatusLoaded && !error) {
 				mProtected = [mAsset hasProtectedContent];
-			}
+			} else {
+                ci::app::console() << "AVKeyValueStatusLoaded error -- hasProtectedContent" << std::endl;
+            }
 			
 			// Create a new AVPlayerItem and make it our player's current item.
 			mPlayer = [[AVPlayer alloc] init];
@@ -591,7 +629,7 @@ void MovieBase::loadAsset()
 
 void MovieBase::updateFrame()
 {
-	lock();
+//	lock();
 	if (mPlayerVideoOutput && mPlayerItem) {
 		if ([mPlayerVideoOutput hasNewPixelBufferForItemTime:[mPlayerItem currentTime]]) {
 			releaseFrame();
@@ -604,7 +642,7 @@ void MovieBase::updateFrame()
 			}
 		}
 	}
-	unlock();
+//	unlock();
 }
 
 uint32_t MovieBase::countFrames() const
@@ -686,7 +724,7 @@ void MovieBase::addObservers()
 }
 
 void MovieBase::removeObservers()
-{
+{    
 	if (mPlayerDelegate && mPlayerItem) {
 		NSNotificationCenter* notify_center = [NSNotificationCenter defaultCenter];
 		[notify_center removeObserver:mPlayerDelegate
@@ -791,11 +829,14 @@ bool MovieSurface::hasAlpha() const
 
 Surface MovieSurface::getSurface()
 {
-	updateFrame();
+#if defined( CINDER_COCOA_TOUCH )
+#elif defined( CINDER_COCOA )
+    updateFrame();
+#endif
 	
-	lock();
+//	lock();
 	Surface result = mSurface;
-	unlock();
+//	unlock();
 	
 	return result;
 }
@@ -818,7 +859,7 @@ void MovieSurface::releaseFrame()
 /////////////////////////////////////////////////////////////////////////////////
 // MovieGl
 MovieGl::MovieGl( const Url& url ) : MovieBase(), mVideoTextureRef(NULL), mVideoTextureCacheRef(NULL)
-{
+{    
 	MovieBase::initFromUrl( url );
 }
 
@@ -877,7 +918,7 @@ void MovieGl::allocateVisualContext()
 	if(mVideoTextureCacheRef == NULL) {
 		CVReturn err = nil;
 #if defined( CINDER_COCOA_TOUCH )
-		ci::app::RendererGlRef renderer;
+		ci::app::RendererGlRef renderer = std::dynamic_pointer_cast<ci::app::RendererGl>(app::App::get()->getRenderer());
 		EAGLContext* context = renderer->getEaglContext();
 		err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, context, NULL, &mVideoTextureCacheRef);
 		
@@ -1062,7 +1103,7 @@ void MovieLoader::waitForPlayThroughOk() const
 }
 
 void MovieLoader::updateLoadState() const
-{
+{    
 	AVPlayerItem* playerItem = [mPlayer currentItem];
 	mLoaded = mPlayable = [playerItem status] == AVPlayerItemStatusReadyToPlay;
 	mPlayThroughOK = [playerItem isPlaybackLikelyToKeepUp];
@@ -1072,13 +1113,13 @@ void MovieLoader::updateLoadState() const
 	app::console() << "  playback okay?: " << mPlayThroughOK << std::endl;
 	
 	//NSArray* loaded = [playerItem seekableTimeRanges];  // this value appears to be garbage (wtf?)
-	NSArray* loaded = [playerItem loadedTimeRanges];      // this value appears to be garbage (wtf?)
-	for (NSValue* value in loaded) {
-		CMTimeRange range = [value CMTimeRangeValue];
-		float start = CMTimeGetSeconds(range.start);
-		float dur = CMTimeGetSeconds(range.duration);
+//	NSArray* loaded = [playerItem loadedTimeRanges];      // this value appears to be garbage (wtf?)
+//	for (NSValue* value in loaded) {
+//		CMTimeRange range = [value CMTimeRangeValue];
+//		float start = CMTimeGetSeconds(range.start);
+//		float dur = CMTimeGetSeconds(range.duration);
 		//mLoaded = (CMTimeCompare([playerItem duration], range.duration) >= 0);
-	}
+//	}
 	
 	AVPlayerItemAccessLog* log = [playerItem accessLog];
 	if (log) {

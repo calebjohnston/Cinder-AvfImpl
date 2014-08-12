@@ -24,7 +24,11 @@ bool setAudioSessionModes()
 	
 #endif
 }
-
+	
+//
+// @see AVFoundation/AVVideoSettings.h
+//
+	
 bool dictionarySetValue( CFMutableDictionaryRef dict, CFStringRef key, SInt32 value )
 {
 	bool         setNumber = false;
@@ -294,6 +298,78 @@ Surface8u convertCvPixelBufferToSurface( CVPixelBufferRef pixelBufferRef )
 	
 	return result;
 }
+	
+Surface8u convertCmSampleBufferToSurface( CMSampleBufferRef sampleBufferRef )
+{
+	CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBufferRef);
+	return convertCvPixelBufferToSurface(imageBuffer);
+}
+
+// @see http://developer.apple.com/library/ios/#documentation/AVFoundation/Reference/AVAssetWriterInputPixelBufferAdaptor_Class/Reference/Reference.html
+// @see http://developer.apple.com/library/ios/#qa/qa1702/_index.html
+// @see http://stackoverflow.com/questions/11863416/read-texture-bytes-with-glreadpixels
+// @see http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/CoreVideo/CVProg_Concepts/CVProg_Concepts.html#//apple_ref/doc/uid/TP40001536-CH202-BABJDFHJ
+CMSampleBufferRef convertSurfaceToCmSampleBuffer( Surface8u source )
+{
+	ImageTargetCvPixelBufferRef target = ImageTargetCvPixelBuffer::createRef( source, false );
+	target->finalize();
+	::CVPixelBufferRef result( target->getCvPixelBuffer() );
+	::CVPixelBufferRetain( result );
+	return (CMSampleBufferRef) result;
+}
+	
+	/*
+CVPixelBufferRef convertTextureToCvPixelBuffer( TextureRef source )
+{
+	CVPixelBufferLockBaseAddress( pixelBufferRef, 0 );
+	uint8_t *ptr = reinterpret_cast<uint8_t*>( CVPixelBufferGetBaseAddress( pixelBufferRef ) );
+	int32_t rowBytes = CVPixelBufferGetBytesPerRow( pixelBufferRef );
+	OSType type = CVPixelBufferGetPixelFormatType( pixelBufferRef );
+	size_t width = CVPixelBufferGetWidth( pixelBufferRef );
+	size_t height = CVPixelBufferGetHeight( pixelBufferRef );
+	CVPixelBufferUnlockBaseAddress(pixelBufferRef, 0);
+	
+	GLenum target = CVOpenGLTextureGetTarget( mVideoTextureRef );
+	GLuint name = CVOpenGLTextureGetName( mVideoTextureRef );
+	bool flipped = ! CVOpenGLTextureIsFlipped( mVideoTextureRef );
+	mTexture = gl::Texture( target, name, mWidth, mHeight, true );
+	Vec2f t0, lowerRight, t2, upperLeft;
+	CVOpenGLTextureGetCleanTexCoords( mVideoTextureRef, &t0.x, &lowerRight.x, &t2.x, &upperLeft.x );
+	mTexture.setCleanTexCoords( std::max( upperLeft.x, lowerRight.x ), std::max( upperLeft.y, lowerRight.y ) );
+	mTexture.setFlipped( flipped );
+	 */
+	
+	/*
+	uint32_t width, height, rowBytes, dataSize;
+	uint8_t* pixelData;
+	CVPixelBufferRef buffer = nil;
+	CFDictionaryRef pixelBufferAttrs = nil;
+	OSType pixelFormat;
+	if (source->hasAlpha()) {
+#if defined( CINDER_COCOA_TOUCH )
+		pixelFormat == kCVPixelFormatType_32ARGB;
+#elif defined( CINDER_COCOA )
+		pixelFormat = k32ARGBPixelFormat;
+#endif
+		rowBytes = 4;
+	}
+	else {
+#if defined( CINDER_COCOA_TOUCH )
+		pixelFormat == kCVPixelFormatType_24RGB
+#elif defined( CINDER_COCOA )
+		pixelFormat = k24RGBPixelFormat;
+#endif
+		rowBytes = 3;
+	}
+	width = source->getWidth();
+	height = source->getHeight();
+	dataSize = height * width * rowBytes;
+	
+	OSStatus err = ::CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, pixelFormat, 
+												  pixelData, rowBytes, destroyDataArrayU8, NULL,
+												  NULL, &buffer);
+}
+	 */
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // ImageTargetCgImage
@@ -302,6 +378,71 @@ ImageTargetCvPixelBufferRef ImageTargetCvPixelBuffer::createRef( ImageSourceRef 
 	return ImageTargetCvPixelBufferRef( new ImageTargetCvPixelBuffer( imageSource, convertToYpCbCr ) );
 }
 
+ImageTargetCvPixelBufferRef ImageTargetCvPixelBuffer::createRef( ImageSourceRef imageSource, CVPixelBufferPoolRef pbPool, bool convertToYpCbCr )
+{
+	return ImageTargetCvPixelBufferRef( new ImageTargetCvPixelBuffer( imageSource, pbPool, convertToYpCbCr ) );
+}
+
+	
+ImageTargetCvPixelBuffer::ImageTargetCvPixelBuffer( ImageSourceRef imageSource, CVPixelBufferPoolRef pbPool, bool convertToYpCbCr )
+	: ImageTarget(), mPixelBufferRef( 0 ), mConvertToYpCbCr( convertToYpCbCr )
+{
+    setSize( (size_t)imageSource->getWidth(), (size_t)imageSource->getHeight() );
+	
+    //http://developer.apple.com/mac/library/qa/qa2006/qa1501.html
+		
+    // if we're converting to YCbCr, we'll load all of the data as RGB in terms of ci::ImageIo
+    // but we run color space conversion over it later in the finalize method
+    OSType formatType;
+    if( ! mConvertToYpCbCr ) {
+        switch( imageSource->getDataType() ) {
+            // for now all we support is 8 bit RGB(A)
+            case ImageIo::UINT16:
+            case ImageIo::FLOAT32:
+            case ImageIo::UINT8:
+                setDataType( ImageIo::UINT8 );
+                if( imageSource->hasAlpha () ) {
+#if defined( CINDER_COCOA_TOUCH )
+                    formatType = kCVPixelFormatType_32ARGB;
+#elif defined( CINDER_COCOA )
+                    formatType = k32ARGBPixelFormat;
+#endif
+                    setChannelOrder( ImageIo::ARGB );
+                }
+                else {
+#if defined( CINDER_COCOA_TOUCH )
+                    formatType = kCVPixelFormatType_24RGB;
+#elif defined( CINDER_COCOA )
+                    formatType = k24RGBPixelFormat;
+#endif
+                    setChannelOrder( ImageIo::RGB );
+                }
+                setColorModel( ImageIo::CM_RGB );
+                break;
+            default:
+                throw ImageIoException();
+        }
+    }
+    else {
+        formatType = 'v408';/*k4444YpCbCrA8PixelFormat;*/
+        setDataType( ImageIo::UINT8 );
+        setChannelOrder( ImageIo::RGBA );
+        setColorModel( ImageIo::CM_RGB );
+    }
+		
+    // TODO: Can we create the buffer from the pool????? Seems like no at first attempt --maybe a pixel buffer attributes mismatch?
+    CFMutableDictionaryRef attributes = CFDictionaryCreateMutable( kCFAllocatorDefault, 6, nil, nil );
+    dictionarySetPixelBufferOpenGLCompatibility( attributes );
+    CVReturn status = CVPixelBufferPoolCreatePixelBufferWithAuxAttributes(kCFAllocatorDefault, pbPool, attributes, &mPixelBufferRef);
+    if( kCVReturnSuccess != status )
+        throw ImageIoException();
+		
+    if( ::CVPixelBufferLockBaseAddress( mPixelBufferRef, 0 ) != kCVReturnSuccess )
+        throw ImageIoException();
+    mData = reinterpret_cast<uint8_t*>( ::CVPixelBufferGetBaseAddress( mPixelBufferRef ) );
+    mRowBytes = ::CVPixelBufferGetBytesPerRow( mPixelBufferRef );
+}
+	
 ImageTargetCvPixelBuffer::ImageTargetCvPixelBuffer( ImageSourceRef imageSource, bool convertToYpCbCr )
 	: ImageTarget(), mPixelBufferRef( 0 ), mConvertToYpCbCr( convertToYpCbCr )
 {
@@ -426,6 +567,16 @@ void ImageTargetCvPixelBuffer::convertDataToAYpCbCr()
 CVPixelBufferRef createCvPixelBuffer( ImageSourceRef imageSource, bool convertToYpCbCr )
 {
 	ImageTargetCvPixelBufferRef target = ImageTargetCvPixelBuffer::createRef( imageSource, convertToYpCbCr );
+	imageSource->load( target );
+	target->finalize();
+	::CVPixelBufferRef result( target->getCvPixelBuffer() );
+	::CVPixelBufferRetain( result );
+	return result;
+}
+	
+CVPixelBufferRef createCvPixelBuffer( ImageSourceRef imageSource, CVPixelBufferPoolRef pbPool, bool convertToYpCbCr )
+{    
+	ImageTargetCvPixelBufferRef target = ImageTargetCvPixelBuffer::createRef( imageSource, pbPool, convertToYpCbCr );
 	imageSource->load( target );
 	target->finalize();
 	::CVPixelBufferRef result( target->getCvPixelBuffer() );

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cinder/Cinder.h"
+#include "cinder/gl/Texture.h"
 #include "cinder/Url.h"
 #include "cinder/Surface.h"
 #include "cinder/ImageIo.h"
@@ -9,10 +10,13 @@
 
 #if defined( CINDER_COCOA )
 	#include <CoreVideo/CoreVideo.h>
+	#include <CoreMedia/CoreMedia.h>
 #endif
 
 namespace cinder { namespace avf {
 
+// TODO: CULL OLD QT METHODS, ADD SUPPORT FOR NEW BEHAVIOR...
+	
 bool setAudioSessionModes();
 bool dictionarySetValue( CFMutableDictionaryRef dict, CFStringRef key, SInt32 value );
 bool dictionarySetPixelBufferPixelFormatType( bool alpha, CFMutableDictionaryRef dict );
@@ -26,12 +30,15 @@ CFMutableDictionaryRef initQTVisualContextOptions( int width, int height, bool a
 static void CVPixelBufferDealloc( void *refcon );
 //! Makes a cinder::Surface form a CVPixelBufferRef, setting a proper deallocation function to free the CVPixelBufferRef upon the destruction of the Surface::Obj
 Surface8u convertCvPixelBufferToSurface( CVPixelBufferRef pixelBufferRef );
+Surface8u convertCmSampleBufferToSurface( CMSampleBufferRef sampleBufferRef );
+CMSampleBufferRef convertSurfaceToCmSampleBuffer( Surface8u source );
 
 typedef std::shared_ptr<class ImageTargetCvPixelBuffer> ImageTargetCvPixelBufferRef;
 
 class ImageTargetCvPixelBuffer : public cinder::ImageTarget {
-  public:
+public:
 	static ImageTargetCvPixelBufferRef createRef( ImageSourceRef imageSource, bool convertToYpCbCr = false );
+	static ImageTargetCvPixelBufferRef createRef( ImageSourceRef imageSource, CVPixelBufferPoolRef pbPool, bool convertToYpCbCr = false );
 	~ImageTargetCvPixelBuffer();
 
 	virtual void*		getRowPointer( int32_t row );
@@ -41,6 +48,7 @@ class ImageTargetCvPixelBuffer : public cinder::ImageTarget {
 
   protected:
 	ImageTargetCvPixelBuffer( ImageSourceRef imageSource, bool convertToYpCbCr );
+	ImageTargetCvPixelBuffer( ImageSourceRef imageSource, CVPixelBufferPoolRef pbPool, bool convertToYpCbCr );
 	
 	void		convertDataToYpCbCr();
 	void		convertDataToAYpCbCr();
@@ -53,5 +61,7 @@ class ImageTargetCvPixelBuffer : public cinder::ImageTarget {
 
 //! Creates a CVPixelBufferRef from an ImageSource. Release the result with CVPixelBufferRelease(). If \a convertToYpCbCr the resulting CVPixelBuffer will be in either \c k444YpCbCr8CodecType or \c k4444YpCbCrA8PixelFormat
 CVPixelBufferRef createCvPixelBuffer( ImageSourceRef imageSource, bool convertToYpCbCr = false );
+
+CVPixelBufferRef createCvPixelBuffer( ImageSourceRef imageSource, CVPixelBufferPoolRef pbPool, bool convertToYpCbCr = false );
 
 } } // namespace cinder::avf
