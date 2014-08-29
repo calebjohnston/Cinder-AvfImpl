@@ -78,6 +78,10 @@ class MovieBase {
 	float		getDuration() const { return mDuration; }
 	//! Returns the movie's framerate measured as frames per second
 	float		getFramerate() const { return mFrameRate; }
+    //! Returns the movie's playback framerate measured as frames
+    float       getPlaybackFramerate() const { return mPlayFrameRate; }
+    //! Sets the movie's playback framerate
+    void        setPlaybackFramerate();
 	//! Returns the total number of frames (video samples) in the movie
 	int32_t		getNumFrames();
 
@@ -131,7 +135,7 @@ class MovieBase {
 	void		play( bool toggle = false );
 	//! Stops playback
 	void		stop();
-	
+    
 	//! Returns the native AvFoundation Player data structure
 	AVPlayer*	getPlayerHandle() const { return mPlayer; }
 	
@@ -194,6 +198,12 @@ class MovieBase {
 	friend class MovieResponder;
 	MovieResponder* mResponder;
 	MovieDelegate* mPlayerDelegate;
+    
+    // Playback Framerate
+    int32_t                     mCurrFrameCount;
+    float                       mPlayFrameRate;
+    int32_t                     mFpsLastSampleFrame;
+    double                      mFpsLastSampleTime;
 };
 
 typedef std::shared_ptr<class MovieSurface> MovieSurfaceRef;

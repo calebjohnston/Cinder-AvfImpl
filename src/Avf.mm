@@ -639,12 +639,25 @@ void MovieBase::updateFrame()
 			if (buffer) {
 				newFrame(buffer);
 				mSignalNewFrame();
+                setPlaybackFramerate();
 			}
 		}
 	}
 //	unlock();
 }
 
+void MovieBase::setPlaybackFramerate( )
+{
+    double now = app::getElapsedSeconds();
+    if( now > mFpsLastSampleTime + app::App::get()->getFpsSampleInterval() ) {
+        uint32_t framePassed = mCurrFrameCount - mFpsLastSampleFrame;
+        mPlayFrameRate = (float)(framePassed / (now - mFpsLastSampleTime));
+        mFpsLastSampleTime = now;
+        mFpsLastSampleFrame = mCurrFrameCount;
+    }
+    mCurrFrameCount++;
+}
+    
 uint32_t MovieBase::countFrames() const
 {
 	if (!mAsset) return 0;

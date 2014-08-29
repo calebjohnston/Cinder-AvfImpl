@@ -1,8 +1,14 @@
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/gl.h"
+#include "cinder/Text.h"
+#include "cinder/Utilities.h"
 
 #include "Avf.h"
+
+using namespace ci;
+using namespace ci::app;
+using namespace std;
 
 class MacApp : public ci::app::AppNative {
   public:
@@ -21,15 +27,12 @@ class MacApp : public ci::app::AppNative {
 	
 	uint32_t mFrameCount;
 	uint32_t mMovieFrameCount;
-	ci::gl::Texture mTexture;
+	ci::gl::Texture mTexture, mInfoTexture;
 	ci::Surface mSurface;
 	ci::avf::MovieGlRef mMovie;
 	ci::avf::MovieLoaderRef mMovieLoader;
+    fs::path mMoviePath;
 };
-
-using namespace ci;
-using namespace ci::app;
-using namespace std;
 
 void MacApp::prepareSettings(ci::app::AppBasic::Settings *settings) {
     settings->setWindowSize(3840/2, 2160/2); // for 4k videos
@@ -46,6 +49,7 @@ void MacApp::setup()
 	if (true) {
 		fs::path movie_path = getOpenFilePath();
 		if( !movie_path.empty() ) {
+            mMoviePath = movie_path;
 			mMovie = avf::MovieGl::create(movie_path);
 		}
 	}
@@ -139,6 +143,18 @@ void MacApp::playerReady()
 	ci::app::console() << "MacApp::playerReady " << std::endl;
 	mMovie->setVolume(1.0f);
 	mMovie->play();
+    
+	// create a texture for showing some info about the movie
+	TextLayout infoText;
+	infoText.clear( ColorA( 0.2f, 0.2f, 0.2f, 0.5f ) );
+	infoText.setColor( Color::white() );
+	infoText.addCenteredLine( mMoviePath.filename().string() );
+	infoText.addLine( toString( mMovie->getWidth() ) + " x " + toString( mMovie->getHeight() ) + " pixels" );
+	infoText.addLine( toString( mMovie->getDuration() ) + " seconds" );
+	infoText.addLine( toString( mMovie->getNumFrames() ) + " frames" );
+	infoText.addLine( toString( mMovie->getFramerate() ) + " fps" );
+	infoText.setBorder( 4, 2 );
+	mInfoTexture = gl::Texture( infoText.render( true ) );
 }
 
 void MacApp::movieEnded()
@@ -184,6 +200,19 @@ void MacApp::draw()
 	else {
 		mFrameCount++;
 	}
+
+    if( mInfoTexture ) {
+		gl::draw( mInfoTexture, Vec2f( 20, getWindowHeight() - 20 - mInfoTexture.getHeight() ) );
+	}
+    
+	// draw fps
+	TextLayout infoFps;
+	infoFps.clear( ColorA( 0.2f, 0.2f, 0.2f, 0.5f ) );
+	infoFps.setColor( Color::white() );
+	infoFps.addLine( "Movie Framerate: " + toString( mMovie->getPlaybackFramerate()) );
+	infoFps.addLine( "App Framerate: " + toString( this->getAverageFps()) );
+	infoFps.setBorder( 4, 2 );
+	gl::draw( gl::Texture( infoFps.render( true ) ), Vec2f( 20, 20 ) );
 }
 
 CINDER_APP_NATIVE( MacApp, RendererGl )
