@@ -731,7 +731,7 @@ void MovieBase::addObservers()
 		
 		[mPlayerItem addObserver:mPlayerDelegate
 					  forKeyPath:@"status"
-						 options:nil
+						 options:0
 						 context:AVPlayerItemStatusContext];
 	}
 }
@@ -929,7 +929,7 @@ const gl::Texture MovieGl::getTexture()
 void MovieGl::allocateVisualContext()
 {
 	if(mVideoTextureCacheRef == NULL) {
-		CVReturn err = nil;
+		CVReturn err = kCVReturnSuccess;
 #if defined( CINDER_COCOA_TOUCH )
 		ci::app::RendererGlRef renderer = std::dynamic_pointer_cast<ci::app::RendererGl>(app::App::get()->getRenderer());
 		EAGLContext* context = renderer->getEaglContext();
@@ -978,7 +978,7 @@ void MovieGl::newFrame( CVImageBufferRef cvImage )
 	CVOpenGLTextureCacheFlush(mVideoTextureCacheRef, 0); // Periodic texture cache flush every frame
 #endif
 	
-	CVReturn err = nil;
+	CVReturn err = kCVReturnSuccess;
 	
 #if defined( CINDER_COCOA_TOUCH )
 	err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault,     // CFAllocatorRef allocator
